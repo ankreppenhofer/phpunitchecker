@@ -25,12 +25,11 @@
 $capabilities = [
     // Ability to use the plugin.
     'tool/phpunitchecker:useplugininstance' => [
-        'riskbitmask' => RISK_XSS,
-        'captype' => 'write',
-        'contextlevel' => CONTEXT_COURSE,
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_USER,
         'archetypes' => [
             'manager' => CAP_ALLOW,
-            'editingteacher' => CAP_ALLOW,
+            'admin' => CAP_ALLOW,
         ],
     ],
 ];
