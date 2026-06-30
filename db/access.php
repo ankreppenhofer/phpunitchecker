@@ -29,7 +29,6 @@ $capabilities = [
         'contextlevel' => CONTEXT_USER,
         'archetypes' => [
             'manager' => CAP_ALLOW,
-            'admin' => CAP_ALLOW,
         ],
     ],
 ];
