@@ -18,9 +18,7 @@ namespace tool_phpunitchecker\form;
 use moodleform;
 
 /**
- * Enrol users form.
- *
- * Simple form to search for users and add them using a manual enrolment to this course.
+ * Form with one button to initialize the phpunit tests.
  *
  * @package tool_phpunitchecker
  * @copyright 2026 MoodleMoot DACH
@@ -52,4 +50,26 @@ class init_phpunit extends moodleform {
             get_string('makephpunitready', 'tool_phpunitchecker')
         );
     }
+
+    /**
+     * Initialize the phpunit test when the action button from the form was hit.
+     * Output is automatically handled via the noticifaction messages.
+     * Returns an array <int,string> which is the return code (0 = success)
+     * and empty html to display.
+     * @return array
+     */
+    public function run_button_action(): array {
+        $data = $this->get_data();
+        if (!empty($data->makephpunitready)) {
+            /** @var $ustomdata \tool_phpunitchecker\phpunit */
+            if($this->_customdata->make_ready()) {
+                \core\notification::success(get_string('phpunitready', 'tool_phpunitchecker'));
+            } else {
+                \core\notification::error(get_string('phpunitreadinessfailed', 'tool_phpunitchecker'));
+                \core\notification::error(s($this->_customdata->get_output()));
+            }
+        }
+        return [0, ''];
+    }
+
 }

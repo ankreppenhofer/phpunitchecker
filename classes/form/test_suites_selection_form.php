@@ -17,22 +17,21 @@ namespace tool_phpunitchecker\form;
 
 use moodleform;
 
+defined('MOODLE_INTERNAL') || die();
+
+require_once($CFG->libdir.'/formslib.php');
+
+use tool_phpunitchecker\report_output;
+
 /**
- * Enrol users form.
- *
- * Simple form to search for users and add them using a manual enrolment to this course.
+ * Form with the test suite selection and some options on
+ * how to generate the test results.
  *
  * @package tool_phpunitchecker
  * @copyright 2026 Alissa Cenga
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-defined('MOODLE_INTERNAL') || die();
-
-require_once($CFG->libdir.'/formslib.php');
-
 class test_suites_selection_form extends moodleform {
-
     /**
      * Form definition.
      * @return void
@@ -96,14 +95,24 @@ class test_suites_selection_form extends moodleform {
     }
 
     /**
-     * Validate the submitted form data.
-     *
-     * @param array $data array of ("fieldname"=>value) of submitted data
-     * @param array $files array of uploaded files "element_name"=>tmp_file_path
-     * @return array of "element_name"=>"error_description" if there are errors,
-     *         or an empty array if everything is OK (true allowed for backwards compatibility too).
+     * Execute tests when action button from form was hit.
+     * Returns an array <int,string> which is the return code (0 = success)
+     * and html with the testreport to display.
+     * @return array
      */
-    public function validation($data, $files) {
-        return [];
+    public function run_button_action(): array {
+        global $OUTPUT;
+        $data = $this->get_data();
+        if (!empty($data->testsuites)) {
+            /** @var $ustomdata \tool_phpunitchecker\phpunit */
+            $junitxml = $this->_customdata->run_suites($data->testsuites);
+            $reportoutput = new report_output($junitxml);
+            $html = $OUTPUT->render_from_template(
+                'tool_phpunitchecker/report_output',
+                $reportoutput->export_for_template($OUTPUT)
+            );
+            return [0, $html];
+        }
+        return [1, 'error creating test report'];
     }
 }

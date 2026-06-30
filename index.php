@@ -26,42 +26,25 @@ use tool_phpunitchecker\form\init_phpunit;
 use tool_phpunitchecker\form\test_suites_selection_form;
 use tool_phpunitchecker\phpunit;
 
-use tool_phpunitchecker\report_output;
-
 require(__DIR__ . '/../../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 
 admin_externalpage_setup('toolphpunitchecker');
 
-
 $phpunit = phpunit::get_instance();
 
-$mform = !$phpunit->is_ready() ? new init_phpunit() : new test_suites_selection_form();
-
-if ($data = $mform->get_data()) {
-    if (!empty($data->makephpunitready)) {
-        if ($phpunit->make_ready()) {
-            \core\notification::success(get_string('phpunitready', 'tool_phpunitchecker'));
-        } else {
-            \core\notification::error(get_string('phpunitreadinessfailed', 'tool_phpunitchecker'));
-            \core\notification::error(s($phpunit->get_output()));
-        }
-    }
-}
+$mform = !$phpunit->is_ready() ? new init_phpunit(null, $phpunit) : new test_suites_selection_form(null, $phpunit);
 
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('pluginname', 'tool_phpunitchecker'));
 echo $OUTPUT->box_start();
 
 $mform->display();
-// Example only. Replace this with the place where your report is stored.
-$report = file_get_contents('junit.xml');
 
-$reportoutput = new report_output($report);
+if ($mform->is_submitted()) {
+    [$res, $html] = $mform->run_button_action();
+    echo $html;
+}
 
-echo $OUTPUT->render_from_template(
-    'tool_phpunitchecker/report_output',
-    $reportoutput->export_for_template($OUTPUT)
-);
 echo $OUTPUT->box_end();
 echo $OUTPUT->footer();
