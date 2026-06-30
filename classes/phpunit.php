@@ -25,8 +25,6 @@
 
 namespace tool_phpunitchecker;
 
-use core\test\phpunit\phpunit_util;
-
 class phpunit {
 
     /**
@@ -67,6 +65,12 @@ class phpunit {
     private $code;
 
     /**
+     * Cache instance.
+     * @var \cache
+     */
+    private $cache;
+
+    /**
      * Constructor.
      */
     public function __construct() {
@@ -77,6 +81,7 @@ class phpunit {
         $this->code = 0;
         $this->moodlephpunitcli = $CFG->dirroot . implode(DIRECTORY_SEPARATOR, ['', 'admin', 'tool', 'phpunit', 'cli']);
         $this->php = $CFG->pathtophp ?? 'php';
+        $this->cache = \cache::make('tool_phpunitchecker', 'suites');
     }
 
     /**
@@ -94,8 +99,8 @@ class phpunit {
      * @return array
      */
     public function list_suites(): array {
-        $cache = \cache::make('tool_phpunitchecker', 'suites');
-        $cached = $cache->get('list');
+        
+        $cached = $this->cache->get('list');
         if ($cached !== false) {
             return $cached;
         }
@@ -117,7 +122,7 @@ class phpunit {
                 }
             }
         }
-        $cache->set('list', $suites);
+        $this->cache->set('list', $suites);
         return $suites;
     }
 
@@ -165,6 +170,7 @@ class phpunit {
      * @return bool
      */
     public function make_ready(): bool {
+        $this->cache->delete('list');
         $this->exec("{$this->php} {$this->moodlephpunitcli}/init.php");
         return $this->code === 0;
     }
