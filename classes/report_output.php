@@ -65,11 +65,11 @@ class report_output implements renderable, templatable {
     protected string $report;
 
     /**
-     * Main PHPUnit test suite name, for example mod_grouptool_testsuite.
+     * Main PHPUnit test suite names, for example mod_grouptool_testsuite.
      *
-     * @var string
+     * @var array
      */
-    protected string $testsuitename = '';
+    protected array $testsuitenames = [];
 
     /**
      * Parsed test class suites.
@@ -176,12 +176,18 @@ class report_output implements renderable, templatable {
         }
 
         $xpath = new \DOMXPath($dom);
+        $mainnodes = $this->find_main_testsuites($xpath);
 
-        $mainnode = $this->find_main_testsuite($xpath);
+        if (!empty($mainnodes)) {
+            foreach ($mainnodes as $mainnode) {
+                $testsuitename = $mainnode->attributes->getNamedItem('name')?->nodeValue ?? '';
 
-        if ($mainnode !== null) {
-            $this->testsuitename = $mainnode->attributes->getNamedItem('name')?->nodeValue ?? '';
-            $this->parse_child_testsuites($xpath, $mainnode);
+                if ($testsuitename !== '') {
+                    $this->testsuitenames[] = $testsuitename;
+                }
+
+                $this->parse_child_testsuites($xpath, $mainnode);
+            }
         } else {
             $this->parse_child_testsuites($xpath, $dom->documentElement);
         }
@@ -206,16 +212,18 @@ class report_output implements renderable, templatable {
     }
 
     /**
-     * Finds the main Moodle PHPUnit testsuite.
+     * Finds all main Moodle PHPUnit testsuites.
      *
      * The JUnit XML can contain wrapper suites such as /var/www/html/phpunit.xml.
-     * The real Moodle testsuite is usually named like mod_grouptool_testsuite
+     * The real Moodle testsuites are usually named like mod_grouptool_testsuite
      * or mod_url_testsuite.
      *
      * @param \DOMXPath $xpath XML xpath instance.
-     * @return \DOMElement|null Main testsuite node.
+     * @return \DOMElement[] Main testsuite nodes.
      */
-    protected function find_main_testsuite(\DOMXPath $xpath): ?\DOMElement {
+    protected function find_main_testsuites(\DOMXPath $xpath): array {
+        $testsuites = [];
+
         foreach ($xpath->query('//testsuite') as $testsuite) {
             if (!$testsuite instanceof \DOMElement) {
                 continue;
@@ -224,15 +232,15 @@ class report_output implements renderable, templatable {
             $name = $testsuite->attributes->getNamedItem('name')?->nodeValue ?? '';
 
             if (preg_match('/^[a-z]+_[a-z0-9_]+_testsuite$/', $name)) {
-                return $testsuite;
+                $testsuites[] = $testsuite;
             }
         }
 
-        return null;
+        return $testsuites;
     }
 
     /**
-     * Parses all direct child testsuites which contain testcases.
+     * Parses all child testsuites which contain testcases.
      *
      * @param \DOMXPath $xpath XML xpath instance.
      * @param \DOMNode|null $parent Parent node.
@@ -243,36 +251,43 @@ class report_output implements renderable, templatable {
             return;
         }
 
-        foreach ($xpath->query('./testsuite[testcase]', $parent) as $testsuite) {
+        foreach ($xpath->query('.//testsuite[testcase]', $parent) as $testsuite) {
             if (!$testsuite instanceof \DOMElement) {
+                continue;
+            }
+
+            $classname = $testsuite->attributes->getNamedItem('name')?->nodeValue ?? '';
+
+            if ($this->has_suite_already_been_parsed($classname)) {
                 continue;
             }
 
             $this->parse_testclass_suite($xpath, $testsuite);
         }
 
-        // Fallback: if the selected parent itself already contains testcases.
         if ($parent instanceof \DOMElement && $parent->getElementsByTagName('testcase')->length > 0) {
-            foreach ($xpath->query('.//testsuite[testcase]', $parent) as $testsuite) {
-                if (!$testsuite instanceof \DOMElement) {
-                    continue;
-                }
+            $classname = $parent->attributes->getNamedItem('name')?->nodeValue ?? '';
 
-                $alreadyparsed = false;
-                $classname = $testsuite->attributes->getNamedItem('name')?->nodeValue ?? '';
-
-                foreach ($this->suites as $suite) {
-                    if ($suite['classname'] === $classname) {
-                        $alreadyparsed = true;
-                        break;
-                    }
-                }
-
-                if (!$alreadyparsed) {
-                    $this->parse_testclass_suite($xpath, $testsuite);
-                }
+            if (!$this->has_suite_already_been_parsed($classname)) {
+                $this->parse_testclass_suite($xpath, $parent);
             }
         }
+    }
+
+    /**
+     * Checks whether a test class suite has already been parsed.
+     *
+     * @param string $classname Full class name.
+     * @return bool
+     */
+    protected function has_suite_already_been_parsed(string $classname): bool {
+        foreach ($this->suites as $suite) {
+            if ($suite['classname'] === $classname) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -611,7 +626,7 @@ class report_output implements renderable, templatable {
         $this->suites[$suiteindex]['hasproblems'] = $hasproblems;
         $this->suites[$suiteindex]['allpassed'] = $suite['total'] > 0 && !$hasproblems;
         $this->suites[$suiteindex]['statusclass'] = $hasproblems ? 'border-danger' : 'border-success';
-        $this->suites[$suiteindex]['headerclass'] = $hasproblems ? 'bg-light text-danger' : 'bg-light text-success';
+        $this->suites[$suiteindex]['headerclass'] = $hasproblems ? 'text-danger' : 'text-success';
     }
 
     /**
@@ -702,8 +717,11 @@ class report_output implements renderable, templatable {
     public function export_for_template(renderer_base $output): stdClass {
         $data = new stdClass();
 
-        $data->testsuitename = $this->testsuitename;
-        $data->hastestsuitename = $this->testsuitename !== '';
+        $data->testsuitenames = array_map(static function(string $name): array {
+            return ['name' => $name];
+        }, $this->testsuitenames);
+
+        $data->hastestsuitenames = !empty($this->testsuitenames);
 
         $data->suites = array_values($this->suites);
 

@@ -6,40 +6,31 @@
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    Moodle is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+    @template tool_phpunitchecker/report_output
 
-    You should have received a copy of the GNU General Public License
-    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-}}
-{{!
-    @template plugintype_pluginname/template_name
-
-    Template purpose and description.
-
-    Classes required for JS:
-    * none
-
-    Data attributes required for JS:
-    * none
+    Template for rendering parsed PHPUnit JUnit XML report output.
 
     Context variables required for this template:
-    * none
-
-    Example context (json):
-    {
-    }
+    * hastestsuitenames
+    * testsuitenames
+    * statusclass
+    * statustext
+    * total
+    * summaryitems
+    * suites
 }}
+
 <div class="tool-phpunitchecker-report">
 
-    {{#hastestsuitename}}
+    {{#hastestsuitenames}}
         <div class="alert alert-info mb-3">
-            <strong>"Testsuite":</strong>
-            {{testsuitename}}
+            <strong>{{#str}} testsuites, tool_phpunitchecker {{/str}}:</strong>
+
+            {{#testsuitenames}}
+                <span class="badge bg-info text-dark me-1">{{name}}</span>
+            {{/testsuitenames}}
         </div>
-    {{/hastestsuitename}}
+    {{/hastestsuitenames}}
 
     <div class="alert {{statusclass}} mb-3">
         <strong>{{statustext}}</strong>
@@ -53,7 +44,7 @@
         <div class="card-body">
             <div class="row gy-2">
                 <div class="col-md-3">
-                    <div class="border rounded p-2">
+                    <div class="border rounded p-2 h-100">
                         <div class="text-muted small">
                             {{#str}} totaltests, tool_phpunitchecker {{/str}}
                         </div>
@@ -65,7 +56,7 @@
 
                 {{#summaryitems}}
                     <div class="col-md-3">
-                        <div class="border rounded p-2">
+                        <div class="border rounded p-2 h-100">
                             <div class="text-muted small">
                                 {{label}}
                             </div>
@@ -108,23 +99,28 @@
                                 </div>
 
                                 <div class="text-nowrap">
-                                    <span class="badge bg-success" title="{{#str}} passedtests, tool_phpunitchecker {{/str}}">
+                                    <span class="badge bg-success"
+                                          title="{{#str}} passedtests, tool_phpunitchecker {{/str}}">
                                         ✓ {{passed}}
                                     </span>
 
-                                    <span class="badge bg-danger" title="{{#str}} failedtests, tool_phpunitchecker {{/str}}">
+                                    <span class="badge bg-danger"
+                                          title="{{#str}} failedtests, tool_phpunitchecker {{/str}}">
                                         ✗ {{failed}}
                                     </span>
 
-                                    <span class="badge bg-danger" title="{{#str}} errortests, tool_phpunitchecker {{/str}}">
+                                    <span class="badge bg-danger"
+                                          title="{{#str}} errortests, tool_phpunitchecker {{/str}}">
                                         ! {{errors}}
                                     </span>
 
-                                    <span class="badge bg-warning text-dark" title="{{#str}} warningtests, tool_phpunitchecker {{/str}}">
+                                    <span class="badge bg-warning text-dark"
+                                          title="{{#str}} warningtests, tool_phpunitchecker {{/str}}">
                                         ⚠ {{warnings}}
                                     </span>
 
-                                    <span class="badge bg-secondary" title="{{#str}} skippedtests, tool_phpunitchecker {{/str}}">
+                                    <span class="badge bg-secondary"
+                                          title="{{#str}} skippedtests, tool_phpunitchecker {{/str}}">
                                         S {{skipped}}
                                     </span>
                                 </div>
