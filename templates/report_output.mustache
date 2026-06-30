@@ -1,36 +1,32 @@
 {{!
     This file is part of Moodle - https://moodle.org/
 
-    Moodle is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
     @template tool_phpunitchecker/report_output
 
     Template for rendering parsed PHPUnit JUnit XML report output.
-
-    Context variables required for this template:
-    * hastestsuitenames
-    * testsuitenames
-    * statusclass
-    * statustext
-    * total
-    * summaryitems
-    * suites
 }}
 
+<style>
+    .tool-phpunitchecker-report .accordion-button::after {
+        display: none;
+    }
+
+    .tool-phpunitchecker-report .phpunitchecker-accordion-icon {
+        transition: transform 0.2s ease-in-out;
+        display: inline-block;
+        width: 1rem;
+    }
+
+    .tool-phpunitchecker-report .accordion-button:not(.collapsed) .phpunitchecker-accordion-icon {
+        transform: rotate(90deg);
+    }
+
+    .tool-phpunitchecker-report pre {
+        white-space: pre-wrap;
+    }
+</style>
+
 <div class="tool-phpunitchecker-report">
-
-    {{#hastestsuitenames}}
-        <div class="alert alert-info mb-3">
-            <strong>{{#str}} testsuites, tool_phpunitchecker {{/str}}:</strong>
-
-            {{#testsuitenames}}
-                <span class="badge bg-info text-dark me-1">{{name}}</span>
-            {{/testsuitenames}}
-        </div>
-    {{/hastestsuitenames}}
 
     <div class="alert {{statusclass}} mb-3">
         <strong>{{statustext}}</strong>
@@ -38,7 +34,7 @@
 
     <div class="card mb-4">
         <div class="card-header">
-            <strong>{{#str}} testsummary, tool_phpunitchecker {{/str}}</strong>
+            <strong>{{#str}} overallsummary, tool_phpunitchecker {{/str}}</strong>
         </div>
 
         <div class="card-body">
@@ -70,32 +66,28 @@
         </div>
     </div>
 
-    <div class="accordion mb-3" id="phpunitchecker-suites-accordion">
-        {{#suites}}
+    <h3 class="h5 mb-3">
+        {{#str}} componentsuites, tool_phpunitchecker {{/str}}
+    </h3>
+
+    <div class="accordion mb-3" id="phpunitchecker-component-accordion">
+        {{#componentsuites}}
             <div class="accordion-item border {{statusclass}} mb-2">
 
-                <h2 class="accordion-header" id="phpunitchecker-suite-heading-{{uniqid}}">
+                <h2 class="accordion-header" id="phpunitchecker-component-heading-{{uniqid}}">
                     <button class="accordion-button {{^hasproblems}}collapsed{{/hasproblems}} {{headerclass}}"
                             type="button"
                             data-bs-toggle="collapse"
-                            data-bs-target="#phpunitchecker-suite-collapse-{{uniqid}}"
+                            data-bs-target="#phpunitchecker-component-collapse-{{uniqid}}"
                             aria-expanded="{{#hasproblems}}true{{/hasproblems}}{{^hasproblems}}false{{/hasproblems}}"
-                            aria-controls="phpunitchecker-suite-collapse-{{uniqid}}">
+                            aria-controls="phpunitchecker-component-collapse-{{uniqid}}">
+
+                        <span class="phpunitchecker-accordion-icon me-2" aria-hidden="true">▸</span>
 
                         <div class="w-100 me-3">
                             <div class="d-flex justify-content-between align-items-start gap-3">
                                 <div>
                                     <strong>{{name}}</strong>
-
-                                    <div class="small text-muted">
-                                        {{classname}}
-                                    </div>
-
-                                    {{#hasfile}}
-                                        <div class="small text-muted mt-1">
-                                            {{file}}
-                                        </div>
-                                    {{/hasfile}}
                                 </div>
 
                                 <div class="text-nowrap">
@@ -123,132 +115,166 @@
                                           title="{{#str}} skippedtests, tool_phpunitchecker {{/str}}">
                                         S {{skipped}}
                                     </span>
+
+                                    <span class="badge bg-dark"
+                                          title="{{#str}} totaltests, tool_phpunitchecker {{/str}}">
+                                        {{total}}
+                                    </span>
                                 </div>
                             </div>
                         </div>
                     </button>
                 </h2>
 
-                <div id="phpunitchecker-suite-collapse-{{uniqid}}"
+                <div id="phpunitchecker-component-collapse-{{uniqid}}"
                      class="accordion-collapse collapse {{#hasproblems}}show{{/hasproblems}}"
-                     aria-labelledby="phpunitchecker-suite-heading-{{uniqid}}"
-                     data-bs-parent="#phpunitchecker-suites-accordion">
+                     aria-labelledby="phpunitchecker-component-heading-{{uniqid}}"
+                     data-bs-parent="#phpunitchecker-component-accordion">
 
                     <div class="accordion-body">
 
-                        <div class="row gy-2 mb-3">
-                            <div class="col-md-2">
-                                <span class="badge bg-success w-100">
-                                    {{#str}} passedtests, tool_phpunitchecker {{/str}}: {{passed}}
-                                </span>
+                        <div class="card mb-3">
+                            <div class="card-header">
+                                <strong>{{#str}} componentsummary, tool_phpunitchecker {{/str}}</strong>
                             </div>
 
-                            <div class="col-md-2">
-                                <span class="badge bg-danger w-100">
-                                    {{#str}} failedtests, tool_phpunitchecker {{/str}}: {{failed}}
-                                </span>
-                            </div>
+                            <div class="card-body">
+                                <div class="row gy-2">
+                                    <div class="col-md-3">
+                                        <div class="border rounded p-2 h-100">
+                                            <div class="text-muted small">
+                                                {{#str}} totaltests, tool_phpunitchecker {{/str}}
+                                            </div>
+                                            <div class="h5 mb-0">
+                                                {{total}}
+                                            </div>
+                                        </div>
+                                    </div>
 
-                            <div class="col-md-2">
-                                <span class="badge bg-danger w-100">
-                                    {{#str}} errortests, tool_phpunitchecker {{/str}}: {{errors}}
-                                </span>
-                            </div>
-
-                            <div class="col-md-2">
-                                <span class="badge bg-warning text-dark w-100">
-                                    {{#str}} warningtests, tool_phpunitchecker {{/str}}: {{warnings}}
-                                </span>
-                            </div>
-
-                            <div class="col-md-2">
-                                <span class="badge bg-secondary w-100">
-                                    {{#str}} skippedtests, tool_phpunitchecker {{/str}}: {{skipped}}
-                                </span>
-                            </div>
-
-                            <div class="col-md-2">
-                                <span class="badge bg-dark w-100">
-                                    {{#str}} totaltests, tool_phpunitchecker {{/str}}: {{total}}
-                                </span>
+                                    {{#summaryitems}}
+                                        <div class="col-md-3">
+                                            <div class="border rounded p-2 h-100">
+                                                <div class="text-muted small">
+                                                    {{label}}
+                                                </div>
+                                                <div class="h5 mb-0 {{class}}">
+                                                    {{value}}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {{/summaryitems}}
+                                </div>
                             </div>
                         </div>
 
-                        <ul class="list-group">
-                            {{#tests}}
-                                <li class="list-group-item">
-                                    <div class="d-flex align-items-start gap-2">
+                        {{#testsuites}}
+                            <div class="card mb-3 {{statusclass}}">
+                                <div class="card-header">
+                                    <div class="d-flex justify-content-between align-items-start gap-3">
+                                        <div>
+                                            <strong class="{{headerclass}}">{{name}}</strong>
 
-                                        <span class="{{badgeclass}} mt-1">
-                                            {{statusicon}}
-                                        </span>
-
-                                        <div class="flex-grow-1">
-                                            <div class="d-flex justify-content-between align-items-start gap-3">
-                                                <div>
-                                                    <strong class="{{statusclass}}">
-                                                        {{name}}
-                                                    </strong>
-
-                                                    <small class="text-muted ms-1">
-                                                        {{statustext}}
-                                                    </small>
-                                                </div>
-
-                                                <div class="small text-muted text-nowrap">
-                                                    {{#hastime}}
-                                                        {{time}}s
-                                                    {{/hastime}}
-
-                                                    {{#hasassertions}}
-                                                        · {{assertions}} {{#str}} assertions, tool_phpunitchecker {{/str}}
-                                                    {{/hasassertions}}
-                                                </div>
+                                            <div class="small text-muted">
+                                                {{classname}}
                                             </div>
 
-                                            {{#hasline}}
-                                                <div class="small text-muted mt-1">
-                                                    {{#str}} line, tool_phpunitchecker {{/str}}: {{line}}
-                                                </div>
-                                            {{/hasline}}
-
                                             {{#hasfile}}
-                                                <div class="small text-muted">
+                                                <div class="small text-muted mt-1">
                                                     {{file}}
                                                 </div>
                                             {{/hasfile}}
+                                        </div>
 
-                                            {{#hastype}}
-                                                <div class="small text-danger mt-2">
-                                                    <strong>{{type}}</strong>
-                                                </div>
-                                            {{/hastype}}
-
-                                            {{#hasdetails}}
-                                                <details class="mt-2">
-                                                    <summary class="small text-muted">
-                                                        {{#str}} details, tool_phpunitchecker {{/str}}
-                                                    </summary>
-
-                                                    <pre class="mt-2 p-2 bg-light border rounded small mb-0">{{details}}</pre>
-                                                </details>
-                                            {{/hasdetails}}
+                                        <div class="text-nowrap">
+                                            <span class="badge bg-success">✓ {{passed}}</span>
+                                            <span class="badge bg-danger">✗ {{failed}}</span>
+                                            <span class="badge bg-danger">! {{errors}}</span>
+                                            <span class="badge bg-warning text-dark">⚠ {{warnings}}</span>
+                                            <span class="badge bg-secondary">S {{skipped}}</span>
+                                            <span class="badge bg-dark">{{total}}</span>
                                         </div>
                                     </div>
-                                </li>
-                            {{/tests}}
-                        </ul>
+                                </div>
+
+                                <div class="card-body">
+                                    <ul class="list-group">
+                                        {{#testcases}}
+                                            <li class="list-group-item">
+                                                <div class="d-flex align-items-start gap-2">
+
+                                                    <span class="{{badgeclass}} mt-1">
+                                                        {{statusicon}}
+                                                    </span>
+
+                                                    <div class="flex-grow-1">
+                                                        <div class="d-flex justify-content-between align-items-start gap-3">
+                                                            <div>
+                                                                <strong class="{{statusclass}}">
+                                                                    {{name}}
+                                                                </strong>
+
+                                                                <small class="text-muted ms-1">
+                                                                    {{statustext}}
+                                                                </small>
+                                                            </div>
+
+                                                            <div class="small text-muted text-nowrap">
+                                                                {{#hastime}}
+                                                                    {{time}}s
+                                                                {{/hastime}}
+
+                                                                {{#hasassertions}}
+                                                                    · {{assertions}} {{#str}} assertions, tool_phpunitchecker {{/str}}
+                                                                {{/hasassertions}}
+                                                            </div>
+                                                        </div>
+
+                                                        {{#hasline}}
+                                                            <div class="small text-muted mt-1">
+                                                                {{#str}} line, tool_phpunitchecker {{/str}}: {{line}}
+                                                            </div>
+                                                        {{/hasline}}
+
+                                                        {{#hasfile}}
+                                                            <div class="small text-muted">
+                                                                {{file}}
+                                                            </div>
+                                                        {{/hasfile}}
+
+                                                        {{#hastype}}
+                                                            <div class="small text-danger mt-2">
+                                                                <strong>{{type}}</strong>
+                                                            </div>
+                                                        {{/hastype}}
+
+                                                        {{#hasdetails}}
+                                                            <details class="mt-2">
+                                                                <summary class="small text-muted">
+                                                                    {{#str}} details, tool_phpunitchecker {{/str}}
+                                                                </summary>
+
+                                                                <pre class="mt-2 p-2 bg-light border rounded small mb-0">{{details}}</pre>
+                                                            </details>
+                                                        {{/hasdetails}}
+                                                    </div>
+                                                </div>
+                                            </li>
+                                        {{/testcases}}
+                                    </ul>
+                                </div>
+                            </div>
+                        {{/testsuites}}
 
                     </div>
                 </div>
             </div>
-        {{/suites}}
+        {{/componentsuites}}
     </div>
 
-    {{^suites}}
+    {{^componentsuites}}
         <div class="alert alert-warning">
             {{#str}} noreportdatafound, tool_phpunitchecker {{/str}}
         </div>
-    {{/suites}}
+    {{/componentsuites}}
 
 </div>

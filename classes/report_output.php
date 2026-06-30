@@ -26,8 +26,11 @@ use templatable;
 /**
  * Renderable output class for PHPUnit JUnit XML reports.
  *
- * This class accepts a PHPUnit JUnit XML report and converts it into a Moodle
- * template context.
+ * The expected JUnit XML structure is:
+ * - Report suite, for example /var/www/html/phpunit.xml.
+ * - Component suite, for example mod_grouptool_testsuite.
+ * - Test class suite, for example mod_grouptool\locallib_test.
+ * - Testcases.
  *
  * @package    tool_phpunitchecker
  */
@@ -65,84 +68,84 @@ class report_output implements renderable, templatable {
     protected string $report;
 
     /**
-     * Main PHPUnit test suite names, for example mod_grouptool_testsuite.
+     * Name of the outer report suite, for example /var/www/html/phpunit.xml.
+     *
+     * @var string
+     */
+    protected string $reportsuitename = '';
+
+    /**
+     * Parsed component suites, for example mod_grouptool_testsuite.
      *
      * @var array
      */
-    protected array $testsuitenames = [];
+    protected array $componentsuites = [];
 
     /**
-     * Parsed test class suites.
-     *
-     * @var array
-     */
-    protected array $suites = [];
-
-    /**
-     * Number of passed tests.
+     * Number of passed tests over the whole report.
      *
      * @var int
      */
     protected int $passed = 0;
 
     /**
-     * Number of failed tests.
+     * Number of failed tests over the whole report.
      *
      * @var int
      */
     protected int $failed = 0;
 
     /**
-     * Number of tests with errors.
+     * Number of errored tests over the whole report.
      *
      * @var int
      */
     protected int $errors = 0;
 
     /**
-     * Number of tests with warnings.
+     * Number of warning tests over the whole report.
      *
      * @var int
      */
     protected int $warnings = 0;
 
     /**
-     * Number of risky tests.
+     * Number of risky tests over the whole report.
      *
      * @var int
      */
     protected int $risky = 0;
 
     /**
-     * Number of skipped tests.
+     * Number of skipped tests over the whole report.
      *
      * @var int
      */
     protected int $skipped = 0;
 
     /**
-     * Number of incomplete tests.
+     * Number of incomplete tests over the whole report.
      *
      * @var int
      */
     protected int $incomplete = 0;
 
     /**
-     * Number of deprecated tests.
+     * Number of deprecated tests over the whole report.
      *
      * @var int
      */
     protected int $deprecated = 0;
 
     /**
-     * Total number of tests.
+     * Total number of tests over the whole report.
      *
      * @var int
      */
     protected int $total = 0;
 
     /**
-     * Whether all tests passed.
+     * Whether all tests in the report passed.
      *
      * @var bool
      */
@@ -176,53 +179,51 @@ class report_output implements renderable, templatable {
         }
 
         $xpath = new \DOMXPath($dom);
-        $mainnodes = $this->find_main_testsuites($xpath);
+        $this->reportsuitename = $this->get_report_suite_name($xpath);
 
-        if (!empty($mainnodes)) {
-            foreach ($mainnodes as $mainnode) {
-                $testsuitename = $mainnode->attributes->getNamedItem('name')?->nodeValue ?? '';
+        $componentsuitenodes = $this->find_component_suites($xpath);
 
-                if ($testsuitename !== '') {
-                    $this->testsuitenames[] = $testsuitename;
-                }
-
-                $this->parse_child_testsuites($xpath, $mainnode);
-            }
-        } else {
-            $this->parse_child_testsuites($xpath, $dom->documentElement);
+        foreach ($componentsuitenodes as $componentsuitenode) {
+            $this->parse_component_suite($xpath, $componentsuitenode);
         }
 
-        $this->total = $this->passed
-            + $this->failed
-            + $this->errors
-            + $this->warnings
-            + $this->risky
-            + $this->skipped
-            + $this->incomplete
-            + $this->deprecated;
-
-        $this->allpassed = $this->total > 0
-            && $this->failed === 0
-            && $this->errors === 0
-            && $this->warnings === 0
-            && $this->risky === 0
-            && $this->skipped === 0
-            && $this->incomplete === 0
-            && $this->deprecated === 0;
+        $this->finalise_overall_summary();
     }
 
     /**
-     * Finds all main Moodle PHPUnit testsuites.
-     *
-     * The JUnit XML can contain wrapper suites such as /var/www/html/phpunit.xml.
-     * The real Moodle testsuites are usually named like mod_grouptool_testsuite
-     * or mod_url_testsuite.
+     * Gets the outer report suite name.
      *
      * @param \DOMXPath $xpath XML xpath instance.
-     * @return \DOMElement[] Main testsuite nodes.
+     * @return string
      */
-    protected function find_main_testsuites(\DOMXPath $xpath): array {
-        $testsuites = [];
+    protected function get_report_suite_name(\DOMXPath $xpath): string {
+        $node = $xpath->query('/testsuites/testsuite')->item(0);
+
+        if ($node instanceof \DOMElement) {
+            return $node->attributes->getNamedItem('name')?->nodeValue ?? '';
+        }
+
+        $node = $xpath->query('/testsuite')->item(0);
+
+        if ($node instanceof \DOMElement) {
+            return $node->attributes->getNamedItem('name')?->nodeValue ?? '';
+        }
+
+        return '';
+    }
+
+    /**
+     * Finds all component suites.
+     *
+     * Component suites are the plugin/component-level suites, for example:
+     * - mod_grouptool_testsuite
+     * - mod_url_testsuite
+     *
+     * @param \DOMXPath $xpath XML xpath instance.
+     * @return \DOMElement[]
+     */
+    protected function find_component_suites(\DOMXPath $xpath): array {
+        $componentsuites = [];
 
         foreach ($xpath->query('//testsuite') as $testsuite) {
             if (!$testsuite instanceof \DOMElement) {
@@ -231,131 +232,167 @@ class report_output implements renderable, templatable {
 
             $name = $testsuite->attributes->getNamedItem('name')?->nodeValue ?? '';
 
-            if (preg_match('/^[a-z]+_[a-z0-9_]+_testsuite$/', $name)) {
-                $testsuites[] = $testsuite;
+            if ($this->is_component_suite_name($name)
+                && $testsuite->getElementsByTagName('testcase')->length > 0) {
+                $componentsuites[] = $testsuite;
             }
         }
 
-        return $testsuites;
+        return $componentsuites;
     }
 
     /**
-     * Parses all child testsuites which contain testcases.
+     * Checks whether a suite name is a Moodle component suite name.
      *
-     * @param \DOMXPath $xpath XML xpath instance.
-     * @param \DOMNode|null $parent Parent node.
-     * @return void
-     */
-    protected function parse_child_testsuites(\DOMXPath $xpath, ?\DOMNode $parent): void {
-        if ($parent === null) {
-            return;
-        }
-
-        foreach ($xpath->query('.//testsuite[testcase]', $parent) as $testsuite) {
-            if (!$testsuite instanceof \DOMElement) {
-                continue;
-            }
-
-            $classname = $testsuite->attributes->getNamedItem('name')?->nodeValue ?? '';
-
-            if ($this->has_suite_already_been_parsed($classname)) {
-                continue;
-            }
-
-            $this->parse_testclass_suite($xpath, $testsuite);
-        }
-
-        if ($parent instanceof \DOMElement && $parent->getElementsByTagName('testcase')->length > 0) {
-            $classname = $parent->attributes->getNamedItem('name')?->nodeValue ?? '';
-
-            if (!$this->has_suite_already_been_parsed($classname)) {
-                $this->parse_testclass_suite($xpath, $parent);
-            }
-        }
-    }
-
-    /**
-     * Checks whether a test class suite has already been parsed.
-     *
-     * @param string $classname Full class name.
+     * @param string $name Suite name.
      * @return bool
      */
-    protected function has_suite_already_been_parsed(string $classname): bool {
-        foreach ($this->suites as $suite) {
-            if ($suite['classname'] === $classname) {
-                return true;
-            }
-        }
-
-        return false;
+    protected function is_component_suite_name(string $name): bool {
+        return preg_match('/^[a-z]+_[a-z0-9_]+_testsuite$/', $name) === 1;
     }
 
     /**
-     * Parses one test class suite.
+     * Parses one component suite.
      *
      * @param \DOMXPath $xpath XML xpath instance.
-     * @param \DOMElement $testsuite Test class suite node.
+     * @param \DOMElement $componentsuitenode Component suite node.
      * @return void
      */
-    protected function parse_testclass_suite(\DOMXPath $xpath, \DOMElement $testsuite): void {
-        $classname = $testsuite->attributes->getNamedItem('name')?->nodeValue ?? '';
-        $file = $testsuite->attributes->getNamedItem('file')?->nodeValue ?? '';
+    protected function parse_component_suite(\DOMXPath $xpath, \DOMElement $componentsuitenode): void {
+        $name = $componentsuitenode->attributes->getNamedItem('name')?->nodeValue ?? '';
+
+        if ($name === '') {
+            $name = get_string('unknownsuite', 'tool_phpunitchecker');
+        }
+
+        $componentindex = $this->add_component_suite($name);
+
+        foreach ($xpath->query('.//testsuite[testcase]', $componentsuitenode) as $testsuitenode) {
+            if (!$testsuitenode instanceof \DOMElement) {
+                continue;
+            }
+
+            $suitename = $testsuitenode->attributes->getNamedItem('name')?->nodeValue ?? '';
+
+            // Do not parse the component suite itself as a test class suite.
+            if ($this->is_component_suite_name($suitename)) {
+                continue;
+            }
+
+            $this->parse_test_suite($xpath, $componentindex, $testsuitenode);
+        }
+
+        // Fallback for unusual JUnit files where the component suite contains
+        // testcases directly without a nested class/file suite.
+        foreach ($xpath->query('./testcase', $componentsuitenode) as $testcase) {
+            if (!$testcase instanceof \DOMElement) {
+                continue;
+            }
+
+            $suiteindex = $this->add_test_suite(
+                $componentindex,
+                $name,
+                $name,
+                ''
+            );
+
+            $this->parse_testcase($componentindex, $suiteindex, $testcase, '');
+        }
+
+        $this->finalise_component_suite($componentindex);
+    }
+
+    /**
+     * Adds a component suite and returns its index.
+     *
+     * @param string $name Component suite name.
+     * @return int Component suite index.
+     */
+    protected function add_component_suite(string $name): int {
+        $this->componentsuites[] = [
+            'uniqid' => clean_param(md5($name . count($this->componentsuites)), PARAM_ALPHANUMEXT),
+            'name' => $name,
+            'testsuites' => [],
+            'passed' => 0,
+            'failed' => 0,
+            'errors' => 0,
+            'warnings' => 0,
+            'risky' => 0,
+            'skipped' => 0,
+            'incomplete' => 0,
+            'deprecated' => 0,
+            'total' => 0,
+            'allpassed' => false,
+            'hasproblems' => false,
+            'statusclass' => '',
+            'headerclass' => '',
+            'summaryitems' => [],
+        ];
+
+        return count($this->componentsuites) - 1;
+    }
+
+    /**
+     * Parses one test class/file suite.
+     *
+     * @param \DOMXPath $xpath XML xpath instance.
+     * @param int $componentindex Component suite index.
+     * @param \DOMElement $testsuitenode Test class suite node.
+     * @return void
+     */
+    protected function parse_test_suite(
+        \DOMXPath $xpath,
+        int $componentindex,
+        \DOMElement $testsuitenode
+    ): void {
+        $classname = $testsuitenode->attributes->getNamedItem('name')?->nodeValue ?? '';
+        $file = $testsuitenode->attributes->getNamedItem('file')?->nodeValue ?? '';
 
         if ($classname === '') {
             $classname = get_string('unknownsuite', 'tool_phpunitchecker');
         }
 
-        $suiteindex = $this->add_suite(
+        $suiteindex = $this->add_test_suite(
+            $componentindex,
             $this->get_short_classname($classname),
             $classname,
             $file
         );
 
-        foreach ($xpath->query('./testcase', $testsuite) as $testcase) {
+        foreach ($xpath->query('./testcase', $testsuitenode) as $testcase) {
             if (!$testcase instanceof \DOMElement) {
                 continue;
             }
 
-            $testname = $testcase->attributes->getNamedItem('name')?->nodeValue ?? '';
-            $testfile = $testcase->attributes->getNamedItem('file')?->nodeValue ?? $file;
-            $line = $testcase->attributes->getNamedItem('line')?->nodeValue ?? '';
-            $time = $testcase->attributes->getNamedItem('time')?->nodeValue ?? '';
-            $assertions = $testcase->attributes->getNamedItem('assertions')?->nodeValue ?? '';
-
-            $statusinfo = $this->get_status_from_junit_testcase($testcase);
-
-            $this->add_test(
-                $suiteindex,
-                $this->humanise_test_name($testname),
-                $statusinfo['status'],
-                $statusinfo['type'],
-                $statusinfo['details'],
-                $testfile,
-                $line,
-                $time,
-                $assertions
-            );
+            $this->parse_testcase($componentindex, $suiteindex, $testcase, $file);
         }
 
-        $this->finalise_suite($suiteindex);
+        $this->finalise_test_suite($componentindex, $suiteindex);
     }
 
     /**
-     * Adds a suite and returns its index.
+     * Adds a test class/file suite to a component suite.
      *
+     * @param int $componentindex Component suite index.
      * @param string $name Suite display name.
      * @param string $classname Full class name.
      * @param string $file Optional file path.
-     * @return int Suite index.
+     * @return int Test suite index.
      */
-    protected function add_suite(string $name, string $classname, string $file = ''): int {
-        $this->suites[] = [
-            'uniqid' => clean_param(md5($classname . $file . count($this->suites)), PARAM_ALPHANUMEXT),
+    protected function add_test_suite(
+        int $componentindex,
+        string $name,
+        string $classname,
+        string $file = ''
+    ): int {
+        $this->componentsuites[$componentindex]['testsuites'][] = [
+            'uniqid' => clean_param(md5($classname . $file . count($this->componentsuites[$componentindex]['testsuites'])),
+                PARAM_ALPHANUMEXT),
             'name' => $name,
             'classname' => $classname,
             'file' => $file,
             'hasfile' => $file !== '',
-            'tests' => [],
+            'testcases' => [],
             'passed' => 0,
             'failed' => 0,
             'errors' => 0,
@@ -371,25 +408,64 @@ class report_output implements renderable, templatable {
             'headerclass' => '',
         ];
 
-        return count($this->suites) - 1;
+        return count($this->componentsuites[$componentindex]['testsuites']) - 1;
     }
 
     /**
-     * Adds a parsed test case to a suite.
+     * Parses one testcase node.
      *
-     * @param int|null $suiteindex Index of the current suite.
-     * @param string $name Test name.
-     * @param string $status Test status.
+     * @param int $componentindex Component suite index.
+     * @param int $suiteindex Test suite index.
+     * @param \DOMElement $testcase Testcase node.
+     * @param string $defaultfile Default file from the parent test suite.
+     * @return void
+     */
+    protected function parse_testcase(
+        int $componentindex,
+        int $suiteindex,
+        \DOMElement $testcase,
+        string $defaultfile = ''
+    ): void {
+        $testname = $testcase->attributes->getNamedItem('name')?->nodeValue ?? '';
+        $file = $testcase->attributes->getNamedItem('file')?->nodeValue ?? $defaultfile;
+        $line = $testcase->attributes->getNamedItem('line')?->nodeValue ?? '';
+        $time = $testcase->attributes->getNamedItem('time')?->nodeValue ?? '';
+        $assertions = $testcase->attributes->getNamedItem('assertions')?->nodeValue ?? '';
+
+        $statusinfo = $this->get_status_from_junit_testcase($testcase);
+
+        $this->add_testcase(
+            $componentindex,
+            $suiteindex,
+            $this->humanise_test_name($testname),
+            $statusinfo['status'],
+            $statusinfo['type'],
+            $statusinfo['details'],
+            $file,
+            $line,
+            $time,
+            $assertions
+        );
+    }
+
+    /**
+     * Adds a parsed testcase.
+     *
+     * @param int $componentindex Component suite index.
+     * @param int $suiteindex Test suite index.
+     * @param string $name Testcase name.
+     * @param string $status Testcase status.
      * @param string $type Optional problem type.
      * @param string $details Optional problem details.
-     * @param string $file Optional test file.
-     * @param string $line Optional line number.
-     * @param string $time Optional test runtime.
+     * @param string $file Optional testcase file.
+     * @param string $line Optional testcase line.
+     * @param string $time Optional testcase runtime.
      * @param string $assertions Optional number of assertions.
      * @return void
      */
-    protected function add_test(
-        ?int $suiteindex,
+    protected function add_testcase(
+        int $componentindex,
+        int $suiteindex,
         string $name,
         string $status,
         string $type = '',
@@ -399,13 +475,9 @@ class report_output implements renderable, templatable {
         string $time = '',
         string $assertions = ''
     ): void {
-        if ($suiteindex === null || !isset($this->suites[$suiteindex])) {
-            return;
-        }
-
         $statusdata = $this->get_status_data($status);
 
-        $this->suites[$suiteindex]['tests'][] = [
+        $testcase = [
             'name' => $name,
             'status' => $status,
             'passed' => $status === self::STATUS_PASSED,
@@ -428,46 +500,95 @@ class report_output implements renderable, templatable {
             'hasassertions' => $assertions !== '',
         ];
 
-        $this->suites[$suiteindex]['total']++;
+        $this->componentsuites[$componentindex]['testsuites'][$suiteindex]['testcases'][] = $testcase;
+
+        $this->increase_counter($this->componentsuites[$componentindex], $status);
+        $this->increase_counter($this->componentsuites[$componentindex]['testsuites'][$suiteindex], $status);
+        $this->increase_counter_for_report($status);
+    }
+
+    /**
+     * Increases a status counter in a suite array.
+     *
+     * @param array $suite Suite data.
+     * @param string $status Test status.
+     * @return void
+     */
+    protected function increase_counter(array &$suite, string $status): void {
+        $suite['total']++;
 
         switch ($status) {
             case self::STATUS_PASSED:
-                $this->suites[$suiteindex]['passed']++;
+                $suite['passed']++;
+                break;
+
+            case self::STATUS_FAILED:
+                $suite['failed']++;
+                break;
+
+            case self::STATUS_ERROR:
+                $suite['errors']++;
+                break;
+
+            case self::STATUS_WARNING:
+                $suite['warnings']++;
+                break;
+
+            case self::STATUS_RISKY:
+                $suite['risky']++;
+                break;
+
+            case self::STATUS_SKIPPED:
+                $suite['skipped']++;
+                break;
+
+            case self::STATUS_INCOMPLETE:
+                $suite['incomplete']++;
+                break;
+
+            case self::STATUS_DEPRECATED:
+                $suite['deprecated']++;
+                break;
+        }
+    }
+
+    /**
+     * Increases a status counter for the overall report.
+     *
+     * @param string $status Test status.
+     * @return void
+     */
+    protected function increase_counter_for_report(string $status): void {
+        switch ($status) {
+            case self::STATUS_PASSED:
                 $this->passed++;
                 break;
 
             case self::STATUS_FAILED:
-                $this->suites[$suiteindex]['failed']++;
                 $this->failed++;
                 break;
 
             case self::STATUS_ERROR:
-                $this->suites[$suiteindex]['errors']++;
                 $this->errors++;
                 break;
 
             case self::STATUS_WARNING:
-                $this->suites[$suiteindex]['warnings']++;
                 $this->warnings++;
                 break;
 
             case self::STATUS_RISKY:
-                $this->suites[$suiteindex]['risky']++;
                 $this->risky++;
                 break;
 
             case self::STATUS_SKIPPED:
-                $this->suites[$suiteindex]['skipped']++;
                 $this->skipped++;
                 break;
 
             case self::STATUS_INCOMPLETE:
-                $this->suites[$suiteindex]['incomplete']++;
                 $this->incomplete++;
                 break;
 
             case self::STATUS_DEPRECATED:
-                $this->suites[$suiteindex]['deprecated']++;
                 $this->deprecated++;
                 break;
         }
@@ -603,30 +724,132 @@ class report_output implements renderable, templatable {
     }
 
     /**
-     * Finalises one suite after all its tests have been parsed.
+     * Finalises one test class/file suite.
      *
-     * @param int $suiteindex Suite index.
+     * @param int $componentindex Component suite index.
+     * @param int $suiteindex Test suite index.
      * @return void
      */
-    protected function finalise_suite(int $suiteindex): void {
-        if (!isset($this->suites[$suiteindex])) {
-            return;
-        }
+    protected function finalise_test_suite(int $componentindex, int $suiteindex): void {
+        $suite = $this->componentsuites[$componentindex]['testsuites'][$suiteindex];
+        $hasproblems = $this->has_problems($suite);
 
-        $suite = $this->suites[$suiteindex];
+        $this->componentsuites[$componentindex]['testsuites'][$suiteindex]['hasproblems'] = $hasproblems;
+        $this->componentsuites[$componentindex]['testsuites'][$suiteindex]['allpassed'] =
+            $suite['total'] > 0 && !$hasproblems;
+        $this->componentsuites[$componentindex]['testsuites'][$suiteindex]['statusclass'] =
+            $hasproblems ? 'border-danger' : 'border-success';
+        $this->componentsuites[$componentindex]['testsuites'][$suiteindex]['headerclass'] =
+            $hasproblems ? 'text-danger' : 'text-success';
+    }
 
-        $hasproblems = $suite['failed'] > 0
-            || $suite['errors'] > 0
-            || $suite['warnings'] > 0
-            || $suite['risky'] > 0
-            || $suite['skipped'] > 0
-            || $suite['incomplete'] > 0
-            || $suite['deprecated'] > 0;
+    /**
+     * Finalises one component suite.
+     *
+     * @param int $componentindex Component suite index.
+     * @return void
+     */
+    protected function finalise_component_suite(int $componentindex): void {
+        $suite = $this->componentsuites[$componentindex];
+        $hasproblems = $this->has_problems($suite);
 
-        $this->suites[$suiteindex]['hasproblems'] = $hasproblems;
-        $this->suites[$suiteindex]['allpassed'] = $suite['total'] > 0 && !$hasproblems;
-        $this->suites[$suiteindex]['statusclass'] = $hasproblems ? 'border-danger' : 'border-success';
-        $this->suites[$suiteindex]['headerclass'] = $hasproblems ? 'text-danger' : 'text-success';
+        $this->componentsuites[$componentindex]['hasproblems'] = $hasproblems;
+        $this->componentsuites[$componentindex]['allpassed'] = $suite['total'] > 0 && !$hasproblems;
+        $this->componentsuites[$componentindex]['statusclass'] = $hasproblems ? 'border-danger' : 'border-success';
+        $this->componentsuites[$componentindex]['headerclass'] = $hasproblems ? 'text-danger' : 'text-success';
+        $this->componentsuites[$componentindex]['summaryitems'] = $this->build_summary_items($suite);
+    }
+
+    /**
+     * Finalises the overall report summary.
+     *
+     * @return void
+     */
+    protected function finalise_overall_summary(): void {
+        $this->total = $this->passed
+            + $this->failed
+            + $this->errors
+            + $this->warnings
+            + $this->risky
+            + $this->skipped
+            + $this->incomplete
+            + $this->deprecated;
+
+        $this->allpassed = $this->total > 0
+            && $this->failed === 0
+            && $this->errors === 0
+            && $this->warnings === 0
+            && $this->risky === 0
+            && $this->skipped === 0
+            && $this->incomplete === 0
+            && $this->deprecated === 0;
+    }
+
+    /**
+     * Checks whether a summary array has problems.
+     *
+     * @param array $summary Summary data.
+     * @return bool
+     */
+    protected function has_problems(array $summary): bool {
+        return $summary['failed'] > 0
+            || $summary['errors'] > 0
+            || $summary['warnings'] > 0
+            || $summary['risky'] > 0
+            || $summary['skipped'] > 0
+            || $summary['incomplete'] > 0
+            || $summary['deprecated'] > 0;
+    }
+
+    /**
+     * Builds summary item data for the template.
+     *
+     * @param array $summary Summary data.
+     * @return array
+     */
+    protected function build_summary_items(array $summary): array {
+        return [
+            [
+                'label' => get_string('passedtests', 'tool_phpunitchecker'),
+                'value' => $summary['passed'],
+                'class' => 'text-success',
+            ],
+            [
+                'label' => get_string('failedtests', 'tool_phpunitchecker'),
+                'value' => $summary['failed'],
+                'class' => 'text-danger',
+            ],
+            [
+                'label' => get_string('errortests', 'tool_phpunitchecker'),
+                'value' => $summary['errors'],
+                'class' => 'text-danger',
+            ],
+            [
+                'label' => get_string('warningtests', 'tool_phpunitchecker'),
+                'value' => $summary['warnings'],
+                'class' => 'text-warning',
+            ],
+            [
+                'label' => get_string('riskytests', 'tool_phpunitchecker'),
+                'value' => $summary['risky'],
+                'class' => 'text-warning',
+            ],
+            [
+                'label' => get_string('skippedtests', 'tool_phpunitchecker'),
+                'value' => $summary['skipped'],
+                'class' => 'text-muted',
+            ],
+            [
+                'label' => get_string('incompletetests', 'tool_phpunitchecker'),
+                'value' => $summary['incomplete'],
+                'class' => 'text-muted',
+            ],
+            [
+                'label' => get_string('deprecatedtests', 'tool_phpunitchecker'),
+                'value' => $summary['deprecated'],
+                'class' => 'text-warning',
+            ],
+        ];
     }
 
     /**
@@ -717,13 +940,10 @@ class report_output implements renderable, templatable {
     public function export_for_template(renderer_base $output): stdClass {
         $data = new stdClass();
 
-        $data->testsuitenames = array_map(static function(string $name): array {
-            return ['name' => $name];
-        }, $this->testsuitenames);
+        $data->reportsuitename = $this->reportsuitename;
+        $data->hasreportsuitename = $this->reportsuitename !== '';
 
-        $data->hastestsuitenames = !empty($this->testsuitenames);
-
-        $data->suites = array_values($this->suites);
+        $data->componentsuites = array_values($this->componentsuites);
 
         $data->passed = $this->passed;
         $data->failed = $this->failed;
@@ -741,48 +961,16 @@ class report_output implements renderable, templatable {
             ? get_string('alltestspassed', 'tool_phpunitchecker')
             : get_string('sometestsfailed', 'tool_phpunitchecker');
 
-        $data->summaryitems = [
-            [
-                'label' => get_string('passedtests', 'tool_phpunitchecker'),
-                'value' => $this->passed,
-                'class' => 'text-success',
-            ],
-            [
-                'label' => get_string('failedtests', 'tool_phpunitchecker'),
-                'value' => $this->failed,
-                'class' => 'text-danger',
-            ],
-            [
-                'label' => get_string('errortests', 'tool_phpunitchecker'),
-                'value' => $this->errors,
-                'class' => 'text-danger',
-            ],
-            [
-                'label' => get_string('warningtests', 'tool_phpunitchecker'),
-                'value' => $this->warnings,
-                'class' => 'text-warning',
-            ],
-            [
-                'label' => get_string('riskytests', 'tool_phpunitchecker'),
-                'value' => $this->risky,
-                'class' => 'text-warning',
-            ],
-            [
-                'label' => get_string('skippedtests', 'tool_phpunitchecker'),
-                'value' => $this->skipped,
-                'class' => 'text-muted',
-            ],
-            [
-                'label' => get_string('incompletetests', 'tool_phpunitchecker'),
-                'value' => $this->incomplete,
-                'class' => 'text-muted',
-            ],
-            [
-                'label' => get_string('deprecatedtests', 'tool_phpunitchecker'),
-                'value' => $this->deprecated,
-                'class' => 'text-warning',
-            ],
-        ];
+        $data->summaryitems = $this->build_summary_items([
+            'passed' => $this->passed,
+            'failed' => $this->failed,
+            'errors' => $this->errors,
+            'warnings' => $this->warnings,
+            'risky' => $this->risky,
+            'skipped' => $this->skipped,
+            'incomplete' => $this->incomplete,
+            'deprecated' => $this->deprecated,
+        ]);
 
         return $data;
     }
