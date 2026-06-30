@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites>
+    <testsuite name="/var/www/html/phpunit.xml" tests="36" assertions="148" errors="12" failures="6" skipped="0" time="85.692892">
+        <testsuite name="mod_grouptool_testsuite" tests="27" assertions="66" errors="12" failures="6" skipped="0" time="78.190250">
+            <testsuite name="mod_grouptool\locallib_test" file="/var/www/html/public/mod/grouptool/tests/locallib_test.php" tests="13" assertions="7" errors="12" failures="0" skipped="0" time="36.542458">
+                <testcase name="test_get_name" file="/var/www/html/public/mod/grouptool/tests/locallib_test.php" line="62" class="mod_grouptool\locallib_test" classname="mod_grouptool.locallib_test" assertions="1" time="3.437654"/>
+                <testcase name="test_get_active_groups" file="/var/www/html/public/mod/grouptool/tests/locallib_test.php" line="78" class="mod_grouptool\locallib_test" classname="mod_grouptool.locallib_test" assertions="0" time="2.370216">
+                    <error type="Error">mod_grouptool\locallib_test::test_get_active_groups
+                        Error: Call to undefined method mod_grouptool\local\grouptool_instance::get_active_groups()
+
+                        /var/www/html/public/mod/grouptool/tests/locallib_test.php:90</error>
+                </testcase>
+                <testcase name="test_create_one_person_groups_creates_groups_and_memberships" file="/var/www/html/public/mod/grouptool/tests/locallib_test.php" line="111" class="mod_grouptool\locallib_test" classname="mod_grouptool.locallib_test" assertions="1" time="2.955449">
+                    <error type="ReflectionException">mod_grouptool\locallib_test::test_create_one_person_groups_creates_groups_and_memberships
+                        ReflectionException: Method mod_grouptool\local\grouptool_instance::create_one_person_groups() does not exist
+
+                        /var/www/html/public/mod/grouptool/tests/locallib_test.php:126</error>
+                </testcase>
+                <testcase name="test_groups_parse_name_replacements" file="/var/www/html/public/mod/grouptool/tests/locallib_test.php" line="203" class="mod_grouptool\locallib_test" classname="mod_grouptool.locallib_test" assertions="0" time="2.830081">
+                    <error type="ReflectionException">mod_grouptool\locallib_test::test_groups_parse_name_replacements
+                        ReflectionException: Method mod_grouptool\local\grouptool_instance::groups_parse_name() does not exist
+
+                        /var/www/html/public/mod/grouptool/tests/locallib_test.php:208</error>
+                </testcase>
+                <testcase name="test_add_missing_agrps_adds_missing_and_sets_inactive" file="/var/www/html/public/mod/grouptool/tests/locallib_test.php" line="265" class="mod_grouptool\locallib_test" classname="mod_grouptool.locallib_test" assertions="4" time="2.627575">
+                    <error type="Error">mod_grouptool\locallib_test::test_add_missing_agrps_adds_missing_and_sets_inactive
+                        Error: Call to undefined method mod_grouptool\local\grouptool_instance::add_missing_agrps()
+
+                        /var/www/html/public/mod/grouptool/tests/locallib_test.php:318</error>
+                </testcase>
+                <testcase name="test_add_agrp_entry_inserts_and_reuses_existing" file="/var/www/html/public/mod/grouptool/tests/locallib_test.php" line="360" class="mod_grouptool\locallib_test" classname="mod_grouptool.locallib_test" assertions="1" time="2.711996">
+                    <error type="ReflectionException">mod_grouptool\locallib_test::test_add_agrp_entry_inserts_and_reuses_existing
+                        ReflectionException: Method mod_grouptool\local\grouptool_instance::add_agrp_entry() does not exist
+
+                        /var/www/html/public/mod/grouptool/tests/locallib_test.php:375</error>
+                </testcase>
+                <testcase name="test_create_groups_preview_only_does_not_create_groups" file="/var/www/html/public/mod/grouptool/tests/locallib_test.php" line="447" class="mod_grouptool\locallib_test" classname="mod_grouptool.locallib_test" assertions="0" time="2.630164">
+                    <error type="TypeError">mod_grouptool\locallib_test::test_create_groups_preview_only_does_not_create_groups
+                        TypeError: mod_grouptool\locallib_test::call_create_groups_private(): Argument #1 ($grouptool) must be of type mod_grouptool\local\tests\grouptool, mod_grouptool\local\grouptool_instance given, called in /var/www/html/public/mod/grouptool/tests/locallib_test.php on line 467
+
+                        /var/www/html/public/mod/grouptool/tests/locallib_test.php:423
+                        /var/www/html/public/mod/grouptool/tests/locallib_test.php:467</error>
+                </testcase>
+                <testcase name="test_create_groups_creates_groups_and_registers_members" file="/var/www/html/public/mod/grouptool/tests/locallib_test.php" line="490" class="mod_grouptool\locallib_test" classname="mod_grouptool.locallib_test" assertions="0" time="3.135901">
+                    <error type="TypeError">mod_grouptool\locallib_test::test_create_groups_creates_groups_and_registers_members
+                        TypeError: mod_grouptool\locallib_test::call_create_groups_private(): Argument #1 ($grouptool) must be of type mod_grouptool\local\tests\grouptool, mod_grouptool\local\grouptool_instance given, called in /var/www/html/public/mod/grouptool/tests/locallib_test.php on line 515
+
+                        /var/www/html/public/mod/grouptool/tests/locallib_test.php:423
+                        /var/www/html/public/mod/grouptool/tests/locallib_test.php:515</error>
+                </testcase>
+                <testcase name="test_create_groups_name_conflict_fails_and_cleans_up" file="/var/www/html/public/mod/grouptool/tests/locallib_test.php" line="559" class="mod_grouptool\locallib_test" classname="mod_grouptool.locallib_test" assertions="0" time="2.906598">
+                    <error type="TypeError">mod_grouptool\locallib_test::test_create_groups_name_conflict_fails_and_cleans_up
+                        TypeError: mod_grouptool\locallib_test::call_create_groups_private(): Argument #1 ($grouptool) must be of type mod_grouptool\local\tests\grouptool, mod_grouptool\local\grouptool_instance given, called in /var/www/html/public/mod/grouptool/tests/locallib_test.php on line 588
+
+                        /var/www/html/public/mod/grouptool/tests/locallib_test.php:423
+                        /var/www/html/public/mod/grouptool/tests/locallib_test.php:588</error>
+                </testcase>
+                <testcase name="test_create_fromto_groups_creates_groups_agrps_and_sets_size" file="/var/www/html/public/mod/grouptool/tests/locallib_test.php" line="626" class="mod_grouptool\locallib_test" classname="mod_grouptool.locallib_test" assertions="0" time="2.858057">
+                    <error type="ReflectionException">mod_grouptool\locallib_test::test_create_fromto_groups_creates_groups_agrps_and_sets_size
+                        ReflectionException: Method mod_grouptool\local\grouptool_instance::create_fromto_groups() does not exist
+
+                        /var/www/html/public/mod/grouptool/tests/locallib_test.php:651</error>
+                </testcase>
+                <testcase name="test_fill_from_queue_use_queue_disabled_returns_true" file="/var/www/html/public/mod/grouptool/tests/locallib_test.php" line="695" class="mod_grouptool\locallib_test" classname="mod_grouptool.locallib_test" assertions="0" time="2.486089">
+                    <error type="Error">mod_grouptool\locallib_test::test_fill_from_queue_use_queue_disabled_returns_true
+                        Error: Call to undefined method mod_grouptool\local\grouptool_instance::get_active_groups()
+
+                        /var/www/html/public/mod/grouptool/tests/locallib_test.php:699</error>
+                </testcase>
+                <testcase name="test_fill_from_queue_moves_user_registers_adds_member_and_sends_message" file="/var/www/html/public/mod/grouptool/tests/locallib_test.php" line="719" class="mod_grouptool\locallib_test" classname="mod_grouptool.locallib_test" assertions="0" time="2.964686">
+                    <error type="Error">mod_grouptool\locallib_test::test_fill_from_queue_moves_user_registers_adds_member_and_sends_message
+                        Error: Call to undefined method mod_grouptool\local\grouptool_instance::get_active_groups()
+
+                        /var/www/html/public/mod/grouptool/tests/locallib_test.php:731</error>
+                </testcase>
+                <testcase name="test_fill_from_queue_does_nothing_when_group_is_full_and_sends_no_message" file="/var/www/html/public/mod/grouptool/tests/locallib_test.php" line="792" class="mod_grouptool\locallib_test" classname="mod_grouptool.locallib_test" assertions="0" time="2.627993">
+                    <error type="Error">mod_grouptool\locallib_test::test_fill_from_queue_does_nothing_when_group_is_full_and_sends_no_message
+                        Error: Call to undefined method mod_grouptool\local\grouptool_instance::get_active_groups()
+
+                        /var/www/html/public/mod/grouptool/tests/locallib_test.php:805</error>
+                </testcase>
+            </testsuite>
+            <testsuite name="mod_grouptool\local\tests\privacy_test" file="/var/www/html/public/mod/grouptool/tests/privacy_test.php" tests="7" assertions="42" errors="0" failures="0" skipped="0" time="21.846263">
+                <testcase name="test_get_contexts_for_userid" file="/var/www/html/public/mod/grouptool/tests/privacy_test.php" line="58" class="mod_grouptool\local\tests\privacy_test" classname="mod_grouptool.local.tests.privacy_test" assertions="2" time="3.674786"/>
+                <testcase name="test_get_users_in_context" file="/var/www/html/public/mod/grouptool/tests/privacy_test.php" line="129" class="mod_grouptool\local\tests\privacy_test" classname="mod_grouptool.local.tests.privacy_test" assertions="12" time="3.205341"/>
+                <testcase name="test_export_user_data_student" file="/var/www/html/public/mod/grouptool/tests/privacy_test.php" line="209" class="mod_grouptool\local\tests\privacy_test" classname="mod_grouptool.local.tests.privacy_test" assertions="1" time="2.721016"/>
+                <testcase name="test_export_user_data_teacher" file="/var/www/html/public/mod/grouptool/tests/privacy_test.php" line="252" class="mod_grouptool\local\tests\privacy_test" classname="mod_grouptool.local.tests.privacy_test" assertions="1" time="2.827815"/>
+                <testcase name="test_delete_data_for_all_users_in_context" file="/var/www/html/public/mod/grouptool/tests/privacy_test.php" line="293" class="mod_grouptool\local\tests\privacy_test" classname="mod_grouptool.local.tests.privacy_test" assertions="8" time="3.162706"/>
+                <testcase name="test_delete_data_for_user" file="/var/www/html/public/mod/grouptool/tests/privacy_test.php" line="349" class="mod_grouptool\local\tests\privacy_test" classname="mod_grouptool.local.tests.privacy_test" assertions="7" time="2.922533"/>
+                <testcase name="test_delete_data_for_users" file="/var/www/html/public/mod/grouptool/tests/privacy_test.php" line="422" class="mod_grouptool\local\tests\privacy_test" classname="mod_grouptool.local.tests.privacy_test" assertions="11" time="3.332065"/>
+            </testsuite>
+            <testsuite name="mod_grouptool\registration_test" file="/var/www/html/public/mod/grouptool/tests/registration_test.php" tests="7" assertions="17" errors="0" failures="6" skipped="0" time="19.801530">
+                <testcase name="test_create_instance" file="/var/www/html/public/mod/grouptool/tests/registration_test.php" line="46" class="mod_grouptool\registration_test" classname="mod_grouptool.registration_test" assertions="2" time="3.163778"/>
+                <testcase name="test_single" file="/var/www/html/public/mod/grouptool/tests/registration_test.php" line="67" class="mod_grouptool\registration_test" classname="mod_grouptool.registration_test" assertions="8" time="3.002595">
+                    <failure type="PHPUnit\Framework\ExpectationFailedException">mod_grouptool\registration_test::test_single
+                        Failed asserting that 'Successfully registered &lt;strong&gt;Sophia Rodríguez&lt;/strong&gt; in group &lt;strong&gt;group-0001&lt;/strong&gt;!' matches expected null.
+
+                        /var/www/html/public/mod/grouptool/tests/registration_test.php:133</failure>
+                </testcase>
+                <testcase name="test_single_queue" file="/var/www/html/public/mod/grouptool/tests/registration_test.php" line="146" class="mod_grouptool\registration_test" classname="mod_grouptool.registration_test" assertions="1" time="2.506372">
+                    <failure type="PHPUnit\Framework\ExpectationFailedException">mod_grouptool\registration_test::test_single_queue
+                        Failed asserting that two strings are equal.
+                        --- Expected
+                        +++ Actual
+                        @@ @@
+                        -'Proceed queueing &lt;strong&gt;芳 张&lt;/strong&gt;...'
+                        +'Are you sure you want to register &lt;strong&gt;芳 张&lt;/strong&gt;...'
+
+                        /var/www/html/public/mod/grouptool/tests/registration_test.php:166</failure>
+                </testcase>
+                <testcase name="test_multiple_queue" file="/var/www/html/public/mod/grouptool/tests/registration_test.php" line="198" class="mod_grouptool\registration_test" classname="mod_grouptool.registration_test" assertions="1" time="2.533299">
+                    <failure type="PHPUnit\Framework\ExpectationFailedException">mod_grouptool\registration_test::test_multiple_queue
+                        Failed asserting that two strings are equal.
+                        --- Expected
+                        +++ Actual
+                        @@ @@
+                        -'Group &lt;strong&gt;group-0001&lt;/strong&gt; has successfully been marked for registration'
+                        +'Successfully registered &lt;strong&gt;Jakub Černý&lt;/strong&gt; in group &lt;strong&gt;group-0001&lt;/strong&gt;!'
+
+                        /var/www/html/public/mod/grouptool/tests/registration_test.php:216</failure>
+                </testcase>
+                <testcase name="test_groupchange_single" file="/var/www/html/public/mod/grouptool/tests/registration_test.php" line="273" class="mod_grouptool\registration_test" classname="mod_grouptool.registration_test" assertions="2" time="3.082735">
+                    <failure type="PHPUnit\Framework\ExpectationFailedException">mod_grouptool\registration_test::test_groupchange_single
+                        Failed asserting that two strings are equal.
+                        --- Expected
+                        +++ Actual
+                        @@ @@
+                        -'Successfully queued &lt;strong&gt;Даниил ?...'
+                        +'Successfully registered &lt;strong&gt;Даниил ?...'
+
+                        /var/www/html/public/mod/grouptool/tests/registration_test.php:295</failure>
+                </testcase>
+                <testcase name="test_groupchange_multiple" file="/var/www/html/public/mod/grouptool/tests/registration_test.php" line="347" class="mod_grouptool\registration_test" classname="mod_grouptool.registration_test" assertions="1" time="2.734602">
+                    <failure type="PHPUnit\Framework\ExpectationFailedException">mod_grouptool\registration_test::test_groupchange_multiple
+                        Failed asserting that two strings are equal.
+                        --- Expected
+                        +++ Actual
+                        @@ @@
+                        -'Group &lt;strong&gt;group-0001&lt;/strong&gt; has successfully been marked for registration'
+                        +'Successfully registered &lt;strong&gt;Jakub Novák&lt;/strong&gt; in group &lt;strong&gt;group-0001&lt;/strong&gt;!'
+
+                        /var/www/html/public/mod/grouptool/tests/registration_test.php:366</failure>
+                </testcase>
+                <testcase name="test_queue_resolving" file="/var/www/html/public/mod/grouptool/tests/registration_test.php" line="500" class="mod_grouptool\registration_test" classname="mod_grouptool.registration_test" assertions="2" time="2.778148">
+                    <failure type="PHPUnit\Framework\ExpectationFailedException">mod_grouptool\registration_test::test_queue_resolving
+                        Failed asserting that two strings are equal.
+                        --- Expected
+                        +++ Actual
+                        @@ @@
+                        -'Successfully queued &lt;strong&gt;Hanna Weber&lt;/s...'
+                        +'Successfully registered &lt;strong&gt;Hanna Weber&lt;/s...'
+
+                        /var/www/html/public/mod/grouptool/tests/registration_test.php:525</failure>
+                </testcase>
+            </testsuite>
+        </testsuite>
+        <testsuite name="mod_url_testsuite" tests="9" assertions="82" errors="0" failures="0" skipped="0" time="7.502641">
+            <testsuite name="mod_url\externallib_test" file="/var/www/html/public/mod/url/tests/externallib_test.php" tests="2" assertions="18" errors="0" failures="0" skipped="0" time="2.242324">
+                <testcase name="test_view_url" file="/var/www/html/public/mod/url/tests/externallib_test.php" line="35" class="mod_url\externallib_test" classname="mod_url.externallib_test" assertions="8" time="1.021958"/>
+                <testcase name="test_mod_url_get_urls_by_courses" file="/var/www/html/public/mod/url/tests/externallib_test.php" line="105" class="mod_url\externallib_test" classname="mod_url.externallib_test" assertions="10" time="1.220366"/>
+            </testsuite>
+            <testsuite name="mod_url\generator_test" file="/var/www/html/public/mod/url/tests/generator_test.php" tests="1" assertions="5" errors="0" failures="0" skipped="0" time="0.949973">
+                <testcase name="test_create_instance" file="/var/www/html/public/mod/url/tests/generator_test.php" line="29" class="mod_url\generator_test" classname="mod_url.generator_test" assertions="5" time="0.949973"/>
+            </testsuite>
+            <testsuite name="mod_url\lib_test" file="/var/www/html/public/mod/url/tests/lib_test.php" tests="6" assertions="59" errors="0" failures="0" skipped="0" time="4.310345">
+                <testcase name="test_url_appears_valid_url" file="/var/www/html/public/mod/url/tests/lib_test.php" line="51" class="mod_url\lib_test" classname="mod_url.lib_test" assertions="38" time="0.201510"/>
+                <testcase name="test_url_view" file="/var/www/html/public/mod/url/tests/lib_test.php" line="98" class="mod_url\lib_test" classname="mod_url.lib_test" assertions="6" time="0.803332"/>
+                <testcase name="test_url_core_calendar_provide_event_action_user_override" file="/var/www/html/public/mod/url/tests/lib_test.php" line="139" class="mod_url\lib_test" classname="mod_url.lib_test" assertions="7" time="0.967015"/>
+                <testcase name="test_url_core_calendar_provide_event_action" file="/var/www/html/public/mod/url/tests/lib_test.php" line="185" class="mod_url\lib_test" classname="mod_url.lib_test" assertions="5" time="0.794881"/>
+                <testcase name="test_url_core_calendar_provide_event_action_already_completed" file="/var/www/html/public/mod/url/tests/lib_test.php" line="211" class="mod_url\lib_test" classname="mod_url.lib_test" assertions="1" time="0.830882"/>
+                <testcase name="test_cm_info_dynamic" file="/var/www/html/public/mod/url/tests/lib_test.php" line="250" class="mod_url\lib_test" classname="mod_url.lib_test" assertions="2" time="0.712725"/>
+            </testsuite>
+        </testsuite>
+    </testsuite>
+</testsuites>

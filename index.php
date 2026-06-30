@@ -25,6 +25,8 @@
 use tool_phpunitchecker\form\test_suites_selection_form;
 use tool_phpunitchecker\phpunit;
 
+use tool_phpunitchecker\report_output;
+
 require(__DIR__ . '/../../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 
@@ -49,6 +51,14 @@ echo $OUTPUT->heading(get_string('pluginname', 'tool_phpunitchecker'));
 echo $OUTPUT->box_start();
 
 $mform->display();
+// Example only. Replace this with the place where your report is stored.
+$report = file_get_contents('junit.xml');
 
+$reportoutput = new report_output($report);
+
+echo $OUTPUT->render_from_template(
+    'tool_phpunitchecker/report_output',
+    $reportoutput->export_for_template($OUTPUT)
+);
 echo $OUTPUT->box_end();
 echo $OUTPUT->footer();

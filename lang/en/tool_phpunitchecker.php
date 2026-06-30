@@ -22,10 +22,42 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['alltestspassed'] = 'All tests passed';
+$string['assertions'] = 'Assertions';
+$string['deprecatedtests'] = 'Deprecated';
+$string['details'] = 'Details';
+$string['errortests'] = 'Errors';
+$string['failedtests'] = 'Failures';
+$string['incompletetests'] = 'Incomplete';
+$string['line'] = 'Line';
+$string['makephpunitready'] = 'Prepare PHPUnit environment';
+$string['noreportdatafound'] = 'No report data could be found.';
+$string['passedtests'] = 'Passed';
+$string['phpunitreadinessfailed'] = 'Could not prepare the PHPUnit environment.';
+$string['phpunitready'] = 'PHPUnit environment is ready.';
+$string['pluginname'] = 'PHPUnit checker';
 $string['pluginname'] = 'PhpUnit Checker';
+$string['riskytests'] = 'Risky';
 $string['runtestsuites'] = 'Run PHPUnit Test Suites';
-$string['testsuites'] = 'PHPUnit Test Suites';
 $string['rununittests'] = 'Run PHPUnit Tests';
+$string['skippedtests'] = 'Skipped';
+$string['sometestsfailed'] = 'Some tests failed, errored, were skipped or produced warnings';
+$string['statusdeprecated'] = 'Deprecated';
+$string['statuserror'] = 'Error';
+$string['statusfailed'] = 'Failure';
+$string['statusincomplete'] = 'Incomplete';
+$string['statuspassed'] = 'Passed';
+$string['statusrisky'] = 'Risky';
+$string['statusskipped'] = 'Skipped';
+$string['statusunknown'] = 'Unknown';
+$string['statuswarning'] = 'Warning';
+$string['testsuites'] = 'PHPUnit Test Suites';
+$string['testsuites'] = 'Test Suites';
+$string['testsummary'] = 'Test summary';
+$string['time'] = 'Time';
+$string['totaltests'] = 'Total tests';
+$string['unknownsuite'] = 'Unknown test suite';
+$string['warningtests'] = 'Warnings';
 $string['makephpunitready'] = 'Prepare PHPUnit environment';
 $string['phpunitready'] = 'PHPUnit environment is ready.';
 $string['phpunitreadinessfailed'] = 'Could not prepare the PHPUnit environment.';
