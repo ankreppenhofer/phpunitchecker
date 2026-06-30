@@ -13,9 +13,14 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 namespace tool_phpunitchecker\form;
 
 use moodleform;
+
+defined('MOODLE_INTERNAL') || die();
+
+require_once($CFG->libdir . '/formslib.php');
 
 /**
  * Form with one button to initialize the phpunit tests.
@@ -24,13 +29,7 @@ use moodleform;
  * @copyright 2026 MoodleMoot DACH
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-defined('MOODLE_INTERNAL') || die();
-
-require_once($CFG->libdir.'/formslib.php');
-
 class init_phpunit extends moodleform {
-
     /**
      * Form definition.
      * @return void
@@ -61,8 +60,8 @@ class init_phpunit extends moodleform {
     public function run_button_action(): array {
         $data = $this->get_data();
         if (!empty($data->makephpunitready)) {
-            /** @var $ustomdata \tool_phpunitchecker\phpunit */
-            if($this->_customdata->make_ready()) {
+            // @var $customdata \tool_phpunitchecker\phpunit .
+            if ($this->_customdata->make_ready()) {
                 \core\notification::success(get_string('phpunitready', 'tool_phpunitchecker'));
             } else {
                 \core\notification::error(get_string('phpunitreadinessfailed', 'tool_phpunitchecker'));
@@ -71,5 +70,4 @@ class init_phpunit extends moodleform {
         }
         return [0, ''];
     }
-
 }

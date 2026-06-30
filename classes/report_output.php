@@ -33,9 +33,10 @@ use templatable;
  * - Testcases.
  *
  * @package    tool_phpunitchecker
+ * @copyright  2026 MoodleMootDACH
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class report_output implements renderable, templatable {
-
     /** @var string Passed test status. */
     protected const STATUS_PASSED = 'passed';
 
@@ -232,8 +233,10 @@ class report_output implements renderable, templatable {
 
             $name = $testsuite->attributes->getNamedItem('name')?->nodeValue ?? '';
 
-            if ($this->is_component_suite_name($name)
-                && $testsuite->getElementsByTagName('testcase')->length > 0) {
+            if (
+                $this->is_component_suite_name($name)
+                && $testsuite->getElementsByTagName('testcase')->length > 0
+            ) {
                 $componentsuites[] = $testsuite;
             }
         }
@@ -386,8 +389,10 @@ class report_output implements renderable, templatable {
         string $file = ''
     ): int {
         $this->componentsuites[$componentindex]['testsuites'][] = [
-            'uniqid' => clean_param(md5($classname . $file . count($this->componentsuites[$componentindex]['testsuites'])),
-                PARAM_ALPHANUMEXT),
+            'uniqid' => clean_param(
+                md5($classname . $file . count($this->componentsuites[$componentindex]['testsuites'])),
+                PARAM_ALPHANUMEXT
+            ),
             'name' => $name,
             'classname' => $classname,
             'file' => $file,

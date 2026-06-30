@@ -13,13 +13,14 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 namespace tool_phpunitchecker\form;
 
 use moodleform;
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->libdir.'/formslib.php');
+require_once($CFG->libdir . '/formslib.php');
 
 use tool_phpunitchecker\report_output;
 
@@ -104,7 +105,7 @@ class test_suites_selection_form extends moodleform {
         global $OUTPUT;
         $data = $this->get_data();
         if (!empty($data->testsuites)) {
-            /** @var $ustomdata \tool_phpunitchecker\phpunit */
+            // @var $ustomdata \tool_phpunitchecker\phpunit .
             $junitxml = $this->_customdata->run_suites($data->testsuites);
             $reportoutput = new report_output($junitxml);
             $html = $OUTPUT->render_from_template(

@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -15,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace tool_phpunitchecker;
+
 /**
  * Plugin version and other meta-data are defined here.
  *
@@ -22,16 +23,12 @@
  * @copyright   2026 MoodleMootDACH
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-namespace tool_phpunitchecker;
-
 class phpunit {
-
     /**
      * Instance of the singleton.
      * @var phpunit
      */
-    static $instance;
+    public static $instance;
 
     /**
      * Full path to the phpunit binary.
@@ -99,7 +96,7 @@ class phpunit {
      * @return array
      */
     public function list_suites(): array {
-        
+
         $cached = $this->cache->get('list');
         if ($cached !== false) {
             return $cached;
