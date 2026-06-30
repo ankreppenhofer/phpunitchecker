@@ -94,6 +94,11 @@ class phpunit {
      * @return array
      */
     public function list_suites(): array {
+        $cache = \cache::make('tool_phpunitchecker', 'suites');
+        $cached = $cache->get('list');
+        if ($cached !== false) {
+            return $cached;
+        }
         $this->exec($this->bin, ['--list-suites' => null]);
         if ($this->code !== 0) {
             return [];
@@ -112,7 +117,7 @@ class phpunit {
                 }
             }
         }
-
+        $cache->set('list', $suites);
         return $suites;
     }
 
