@@ -22,9 +22,15 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-
 defined('MOODLE_INTERNAL') || die;
 
 if ($hassiteconfig) {
-    $ADMIN->add('development', new admin_externalpage('toolphpunitchecker', get_string('pluginname', 'tool_phpunitchecker'), "$CFG->wwwroot/$CFG->admin/tool/phpunitchecker/index.php"));
+    $ADMIN->add(
+        'development',
+        new admin_externalpage(
+            'toolphpunitchecker',
+            get_string('pluginname', 'tool_phpunitchecker'),
+            "$CFG->wwwroot/$CFG->admin/tool/phpunitchecker/index.php"
+        )
+    );
 }
