@@ -15,22 +15,23 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * PHPunitChecker integration
+ * Cache definitions for the PHPUnit checker tool.
  *
- * @package    tool_phpunitchecker
- * @copyright  2026 Alissa Cenga
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package     tool_phpunitchecker
+ * @category    cache
+ * @copyright   2026 MoodleMootDACH
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die;
+defined('MOODLE_INTERNAL') || die();
 
-if ($hassiteconfig) {
-    $ADMIN->add(
-        'development',
-        new admin_externalpage(
-            'toolphpunitchecker',
-            get_string('pluginname', 'tool_phpunitchecker'),
-            "$CFG->wwwroot/$CFG->admin/tool/phpunitchecker/index.php"
-        )
-    );
-}
+$definitions = [
+    // Caches the list of available phpunit test suites so that the (expensive)
+    // phpunit --list-suites command does not have to run on every request.
+    'suites' => [
+        'mode' => cache_store::MODE_APPLICATION,
+        'simplekeys' => true,
+        'simpledata' => true,
+        'ttl' => 600,
+    ],
+];
