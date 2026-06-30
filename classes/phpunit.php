@@ -37,7 +37,7 @@ class phpunit {
 
     /**
      * Full path to the phpunit binary.
-     * 
+     *
      * @var string
      */
     private $bin;
@@ -114,6 +114,36 @@ class phpunit {
         }
 
         return $suites;
+    }
+
+    /**
+     * Run test suites and return the junit xml as a result.
+     * @param string[] $suites
+     * @return string
+     */
+    public function run_suites(array $suites): string {
+        global $CFG;
+        $suites = array_filter(
+            array_map(fn($v) => trim($v), $suites),
+            fn($v) => !empty($v)
+        );
+        if (empty($suites)) {
+            $this->code = -1;
+            $this->output = ['No suites defined'];
+            return '';
+        }
+        $junitxml = $CFG->tempdir . DIRECTORY_SEPARATOR . uniqid('phpunitchecker_');
+        $this->exec($this->bin, [
+            '--testsuite' => implode(',', $suites),
+            '--log-junit' => $junitxml,
+        ]);
+        if ($this->code !== 0) {
+            @unlink($junitxml);
+            return '';
+        }
+        $xml = file_get_contents($junitxml);
+        @unlink($junitxml);
+        return $xml;
     }
 
     /**
