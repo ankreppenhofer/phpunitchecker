@@ -22,6 +22,39 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['pluginname'] = 'PHPUnit checker';
+
+$string['testsummary'] = 'Test summary';
+$string['totaltests'] = 'Total tests';
+$string['details'] = 'Details';
+
+$string['passedtests'] = 'Passed';
+$string['failedtests'] = 'Failures';
+$string['errortests'] = 'Errors';
+$string['warningtests'] = 'Warnings';
+$string['riskytests'] = 'Risky';
+$string['skippedtests'] = 'Skipped';
+$string['incompletetests'] = 'Incomplete';
+$string['deprecatedtests'] = 'Deprecated';
+
+$string['alltestspassed'] = 'All tests passed';
+$string['sometestsfailed'] = 'Some tests failed, errored, were skipped or produced warnings';
+$string['noreportdatafound'] = 'No report data could be found.';
+$string['unknownsuite'] = 'Unknown test suite';
+
+$string['statuspassed'] = 'Passed';
+$string['statusfailed'] = 'Failure';
+$string['statuserror'] = 'Error';
+$string['statuswarning'] = 'Warning';
+$string['statusrisky'] = 'Risky';
+$string['statusskipped'] = 'Skipped';
+$string['statusincomplete'] = 'Incomplete';
+$string['statusdeprecated'] = 'Deprecated';
+$string['statusunknown'] = 'Unknown';
+
+$string['time'] = 'Time';
+$string['assertions'] = 'Assertions';
+$string['line'] = 'Line';
 $string['pluginname'] = 'PhpUnit Checker';
 $string['runtestsuites'] = 'Run PHPUnit Test Suites';
 $string['testsuites'] = 'PHPUnit Test Suites';
