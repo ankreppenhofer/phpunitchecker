@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -16,15 +15,22 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Plugin version and other meta-data are defined here.
+ * Plugin capabilities for the plugintype_pluginname plugin.
  *
- * @package     tool_phpunitchecker
- * @copyright   2026 Anne Kreppenhofer
- * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   tool_phpunitchecker
+ * @copyright Year, You Name <your@email.address>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
-$plugin->version = 2026063000;         // The current plugin version (Date: YYYYMMDDXX).
-$plugin->requires = 2026041000;         // Requires this Moodle version.
-$plugin->component = 'tool_phpunitchecker';      // Full name of the plugin (used for diagnostics).
+$capabilities = [
+    // Ability to use the plugin.
+    'tool/phpunitchecker:useplugininstance' => [
+        'riskbitmask' => RISK_XSS,
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_COURSE,
+        'archetypes' => [
+            'manager' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+        ],
+    ],
+];
