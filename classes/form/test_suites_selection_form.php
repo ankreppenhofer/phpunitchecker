@@ -92,15 +92,7 @@ class test_suites_selection_form extends moodleform {
         );
         $mform->setDefault('displaynotices', 1);
 
-        $mform->addElement(
-            'submit',
-            'makephpunitready',
-            get_string('makephpunitready', 'tool_phpunitchecker')
-        );
-
         $this->add_action_buttons(false, get_string('runtestsuites', 'tool_phpunitchecker'));
-
-
     }
 
     /**

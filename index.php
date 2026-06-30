@@ -22,6 +22,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use tool_phpunitchecker\form\init_phpunit;
 use tool_phpunitchecker\form\test_suites_selection_form;
 use tool_phpunitchecker\phpunit;
 
@@ -32,8 +33,10 @@ require_once($CFG->libdir.'/adminlib.php');
 
 admin_externalpage_setup('toolphpunitchecker');
 
-$mform = new test_suites_selection_form();
+
 $phpunit = phpunit::get_instance();
+
+$mform = !$phpunit->is_ready() ? new init_phpunit() : new test_suites_selection_form();
 
 if ($data = $mform->get_data()) {
     if (!empty($data->makephpunitready)) {
