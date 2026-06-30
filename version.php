@@ -26,5 +26,5 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->version = 2026063000;         // The current plugin version (Date: YYYYMMDDXX).
-$plugin->requires = 2026041000;         // Requires this Moodle version.
+$plugin->requires = 2026041000.01;         // Requires this Moodle version.
 $plugin->component = 'tool_phpunitchecker';      // Full name of the plugin (used for diagnostics).
