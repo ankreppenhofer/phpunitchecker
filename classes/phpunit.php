@@ -99,6 +99,7 @@ class phpunit {
             return [];
         }
         $suites = [];
+
         foreach ($this->output as $line) {
             $line = trim($line);
             if (substr($line, 0, 2) === '- ') {
@@ -111,6 +112,7 @@ class phpunit {
                 }
             }
         }
+
         return $suites;
     }
 

@@ -22,4 +22,10 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['pluginname'] = 'PhpUnitchecker';
+$string['pluginname'] = 'PhpUnit Checker';
+$string['runtestsuites'] = 'Run PHPUnit Test Suites';
+$string['testsuites'] = 'PHPUnit Test Suites';
+$string['rununittests'] = 'Run PHPUnit Tests';
+$string['makephpunitready'] = 'Prepare PHPUnit environment';
+$string['phpunitready'] = 'PHPUnit environment is ready.';
+$string['phpunitreadinessfailed'] = 'Could not prepare the PHPUnit environment.';
