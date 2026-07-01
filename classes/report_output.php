@@ -20,7 +20,6 @@ defined('MOODLE_INTERNAL') || die();
 
 use core\exception\moodle_exception;
 use renderable;
-use renderer_base;
 use stdClass;
 use templatable;
 
@@ -944,10 +943,10 @@ class report_output implements renderable, templatable {
     /**
      * Exports data for the Moodle Mustache template.
      *
-     * @param renderer_base $output Moodle renderer.
+     * @param mixed $output Moodle renderer.
      * @return stdClass
      */
-    public function export_for_template(renderer_base $output): stdClass {
+    public function export_for_template($output): stdClass {
         $data = new stdClass();
 
         $data->reportsuitename = $this->reportsuitename;

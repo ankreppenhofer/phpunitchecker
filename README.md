@@ -31,8 +31,4 @@ Go to:
   Available setting:                                                                                                                                            
                                                                                                                                                                 
   - Enable confetti: Show confetti when selected test suites pass.                                                                                              
-                                                                                                                                                                
-  ## Notes                                                                                                                                                      
-                                                                                                                                                                
-  The report is based on PHPUnit’s JUnit XML output. Some PHPUnit issue types may not be distinguishable in that XML format.                                    
-                            
+                                                                                                                                                                 
