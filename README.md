@@ -26,7 +26,7 @@ Go to:
   Settings are available at:                                                                                                                                    
 
 ```text
-  Site administration → Development → PHPUnit Checker settings                                                                                                  
+  Site administration → Development → PHPUnit Checker settings
 ```                                                                                                                                                         
   Available setting:                                                                                                                                            
                                                                                                                                                                 

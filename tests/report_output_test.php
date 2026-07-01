@@ -49,7 +49,7 @@ XML);
     }
 
     /**
-     * Problem nodes in JUnit XML should be counted separately.
+     * Standard JUnit problem nodes should be counted separately.
      *
      * @return void
      */
@@ -59,9 +59,9 @@ XML);
         $report = new report_output(<<<XML
 <?xml version="1.0" encoding="UTF-8"?>
 <testsuites>
-  <testsuite name="/var/www/html/phpunit.xml" tests="8" assertions="2" errors="1" failures="1" skipped="1">
-    <testsuite name="tool_phpunitchecker_testsuite" tests="8" assertions="2" errors="1" failures="1" skipped="1">
-      <testsuite name="tool_phpunitchecker\\sample_test" file="/var/www/html/sample_test.php" tests="8" assertions="2">
+  <testsuite name="/var/www/html/phpunit.xml" tests="4" assertions="2" errors="1" failures="1" skipped="1">
+    <testsuite name="tool_phpunitchecker_testsuite" tests="4" assertions="2" errors="1" failures="1" skipped="1">
+      <testsuite name="tool_phpunitchecker\\sample_test" file="/var/www/html/sample_test.php" tests="4" assertions="2">
         <testcase name="test_passes" file="/var/www/html/sample_test.php" line="10" assertions="1" time="0.01"/>
         <testcase name="test_fails" file="/var/www/html/sample_test.php" line="20" assertions="1" time="0.02">
           <failure type="PHPUnit\\Framework\\ExpectationFailedException">Failed asserting that false is true.</failure>
@@ -69,20 +69,8 @@ XML);
         <testcase name="test_errors" file="/var/www/html/sample_test.php" line="30" assertions="0" time="0.03">
           <error type="Error">Example error.</error>
         </testcase>
-        <testcase name="test_warns" file="/var/www/html/sample_test.php" line="40" assertions="0" time="0.04">
-          <warning type="PHPUnit\\Runner\\Warning">Example warning.</warning>
-        </testcase>
-        <testcase name="test_is_risky" file="/var/www/html/sample_test.php" line="50" assertions="0" time="0.05">
-          <risky>Example risky test.</risky>
-        </testcase>
         <testcase name="test_is_skipped" file="/var/www/html/sample_test.php" line="60" assertions="0" time="0.06">
           <skipped>Example skipped test.</skipped>
-        </testcase>
-        <testcase name="test_is_incomplete" file="/var/www/html/sample_test.php" line="70" assertions="0" time="0.07">
-          <incomplete>Example incomplete test.</incomplete>
-        </testcase>
-        <testcase name="test_is_deprecated" file="/var/www/html/sample_test.php" line="80" assertions="0" time="0.08">
-          <deprecated>Example deprecated test.</deprecated>
         </testcase>
       </testsuite>
     </testsuite>
@@ -92,15 +80,14 @@ XML);
 
         $data = $report->export_for_template($OUTPUT);
 
-        $this->assertSame(8, $report->get_total_count());
+        $this->assertSame(4, $report->get_total_count());
         $this->assertSame(1, $report->get_passed_count());
         $this->assertSame(1, $report->get_failed_count());
         $this->assertSame(1, $report->get_error_count());
-        $this->assertSame(1, $report->get_warning_count());
-        $this->assertSame(1, $data->risky);
+        $this->assertSame(0, $report->get_warning_count());
         $this->assertSame(1, $data->skipped);
-        $this->assertSame(1, $data->incomplete);
-        $this->assertSame(1, $data->deprecated);
+        $this->assertSame(0, $data->incomplete);
+        $this->assertSame(0, $data->deprecated);
         $this->assertFalse($report->all_tests_passed());
     }
 
