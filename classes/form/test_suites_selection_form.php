@@ -79,7 +79,7 @@ class test_suites_selection_form extends moodleform {
             if (empty($res->junitxml)) {
                 return [1, 'error creating test report'];
             }
-            $reportoutput = new report_output($res->junitxml);
+            $reportoutput = new report_output($res->junitxml,$res->output);
             $allpassed = $reportoutput->all_tests_passed();
             $html = $OUTPUT->render_from_template(
                 'tool_phpunitchecker/report_output',

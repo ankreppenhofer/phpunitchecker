@@ -111,6 +111,11 @@
                                         ⚠ {{warnings}}
                                     </span>
 
+                                    <span class="badge bg-info text-dark"
+                                          title="{{#str}} noticetests, tool_phpunitchecker {{/str}}">
+                                        N {{notices}}
+                                    </span>
+
                                     <span class="badge bg-secondary"
                                           title="{{#str}} skippedtests, tool_phpunitchecker {{/str}}">
                                         S {{skipped}}
@@ -190,6 +195,7 @@
                                             <span class="badge bg-danger">✗ {{failed}}</span>
                                             <span class="badge bg-danger">! {{errors}}</span>
                                             <span class="badge bg-warning text-dark">⚠ {{warnings}}</span>
+                                            <span class="badge bg-info text-dark">N {{notices}}</span>
                                             <span class="badge bg-secondary">S {{skipped}}</span>
                                             <span class="badge bg-dark">{{total}}</span>
                                         </div>
@@ -224,7 +230,8 @@
                                                                 {{/hastime}}
 
                                                                 {{#hasassertions}}
-                                                                    · {{assertions}} {{#str}} assertions, tool_phpunitchecker {{/str}}
+                                                                    · {{assertions}} {{#str}}
+                                                                    assertions, tool_phpunitchecker {{/str}}
                                                                 {{/hasassertions}}
                                                             </div>
                                                         </div>

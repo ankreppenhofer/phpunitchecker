@@ -153,6 +153,13 @@ class phpunit {
         }
         $junitxml = $CFG->tempdir . DIRECTORY_SEPARATOR . uniqid('phpunitchecker_');
         $this->exec($this->bin, [
+            '--display-notices' => null,
+            '--display-warnings' => null,
+            '--display-deprecations' => null,
+            '--display-phpunit-deprecations' => null,
+            '--display-incomplete' => null,
+            '--display-errors' => null,
+            '--display-all-issues' => null,
             '--testsuite' => implode(',', $suites),
             '--log-junit' => $junitxml,
         ]);

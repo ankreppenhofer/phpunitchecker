@@ -25,11 +25,11 @@ defined('MOODLE_INTERNAL') || die();
 final class report_types_test extends \advanced_testcase {
 
     /**
-     * Example of a passing test.
+     * Test has a deprecation
      *
      * @return void
      */
-    public function test_passes(): void {
+    public function test_deprecated(): void {
         $this->assertTrue(true);
     }
 
@@ -84,15 +84,10 @@ final class report_types_test extends \advanced_testcase {
     }
 
     /**
-     * Example of a risky test.
-     *
-     * This test intentionally performs no assertion. With strict PHPUnit
-     * settings, PHPUnit marks this as risky.
-     *
-     * @return void
-     */
-    public function test_is_risky(): void {
-        $value = 1 + 1;
+     * Test passes
+     **/
+    public function test_passes() {
+        $this->assertTrue(true);
     }
 
     /**
