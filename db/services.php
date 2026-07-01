@@ -41,4 +41,12 @@ $functions = [
         'ajax' => true,
         'loginrequired' => true,
     ],
+    'tool_phpunitchecker_inspect_file' => [
+        'classname' => 'tool_phpunitchecker\external\inspect_file',
+        'methodname' => 'execute',
+        'description' => 'Get the snippet of a file with the current line highlighted',
+        'type' => 'read',
+        'ajax' => true,
+        'loginrequired' => true,
+    ],
 ];

@@ -32,6 +32,7 @@ $string['enableconfetti'] = 'Enable confetti';
 $string['enableconfetti_desc'] = 'Show confetti when selected PHPUnit test suites pass.';
 $string['errortests'] = 'Errors';
 $string['failedtests'] = 'Failures';
+$string['fileinspector'] = 'File Inspector';
 $string['incompletetests'] = 'Incomplete';
 $string['line'] = 'Line';
 $string['makephpunitready'] = 'Prepare PHPUnit environment';

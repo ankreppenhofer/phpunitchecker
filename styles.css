@@ -1,0 +1,23 @@
+.inspectfile {
+    cursor: pointer;
+}
+.file-inspector {
+    font-family: monospace;
+    background-color: #f5f5f5;
+    padding: 10px;
+    border-radius: 5px;
+    overflow-x: auto;
+}
+.file-inspector-line {
+    display: flex;
+    align-items: center;
+    padding: 2px 0;
+}
+.file-inspector-lineno {
+    width: 40px;
+    margin-right: 10px;
+    color: #888;
+}
+.file-inspector-content {
+    white-space: pre;
+}
