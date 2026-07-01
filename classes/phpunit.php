@@ -125,11 +125,20 @@ class phpunit {
 
     /**
      * Run test suites and return the junit xml as a result.
+     * Returns an stdClass with the properties:
+     *   code (int)
+     *   output (string)
+     *   junitxml (string).
      * @param string[] $suites
-     * @return string
+     * @return \stdClass
      */
-    public function run_suites(array $suites): string {
+    public function run_suites(array $suites): \stdClass {
         global $CFG;
+        $result = (object)[
+            'code' => 0,
+            'output' => '',
+            'junitxml' => '',
+        ];
         $suites = array_filter(
             array_map(fn($v) => trim($v), $suites),
             fn($v) => !empty($v)
@@ -137,20 +146,20 @@ class phpunit {
         if (empty($suites)) {
             $this->code = -1;
             $this->output = ['No suites defined'];
-            return '';
+            $result->code = $this->code;
+            $result->output = $this->output;
+            return $result;
         }
         $junitxml = $CFG->tempdir . DIRECTORY_SEPARATOR . uniqid('phpunitchecker_');
         $this->exec($this->bin, [
             '--testsuite' => implode(',', $suites),
             '--log-junit' => $junitxml,
         ]);
-        if ($this->code !== 0) {
-            @unlink($junitxml);
-            return '';
-        }
-        $xml = file_get_contents($junitxml);
+        $result->code = $this->code;
+        $result->output = $this->get_output();
+        $result->junitxml = file_get_contents($junitxml) ?: '';
         @unlink($junitxml);
-        return $xml;
+        return $result;
     }
 
     /**
