@@ -76,7 +76,7 @@ class test_suites_selection_form extends moodleform {
         $data = $this->get_data();
         if (!empty($data->testsuites)) {
             $res = phpunit::get_instance()->run_suites($data->testsuites);
-            if (empty($res->junitxml) || $res->code !== 0) {
+            if (empty($res->junitxml)) {
                 return [1, 'error creating test report'];
             }
             $reportoutput = new report_output($res->junitxml);
