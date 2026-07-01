@@ -65,8 +65,8 @@ if ($mform->is_submitted()) {
             [$html, $containerid]
         );
     } else {
+        $PAGE->requires->js_call_amd('tool_phpunitchecker/inspect-file', 'init', [get_string('fileinspector', 'tool_phpunitchecker')]);
         if ($res === 0) {
-            $PAGE->requires->js_call_amd('tool_phpunitchecker/inspect-file', 'init', [get_string('fileinspector', 'tool_phpunitchecker')]);
             if (get_config('tool_phpunitchecker', 'enableconfetti')) {
                 $PAGE->requires->js_call_amd('local_confetti/confetti', 'init', [[
                     'preset' => get_config('local_confetti', 'confettipreset') ?: 'realistic',
