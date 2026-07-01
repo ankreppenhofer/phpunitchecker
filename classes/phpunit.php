@@ -139,9 +139,10 @@ class phpunit {
             'output' => '',
             'junitxml' => '',
         ];
+        $possible = $this->list_suites();
         $suites = array_filter(
             array_map(fn($v) => trim($v), $suites),
-            fn($v) => !empty($v)
+            fn($v) => !empty($v) && isset($possible[$v])
         );
         if (empty($suites)) {
             $this->code = -1;
