@@ -33,4 +33,12 @@ $functions = [
         'ajax' => true,
         'loginrequired' => true,
     ],
+    'tool_phpunitchecker_get_task_status' => [
+        'classname' => 'tool_phpunitchecker\external\task_status',
+        'methodname' => 'execute',
+        'description' => 'Get the task status of the phpunit init task or test run task',
+        'type' => 'read',
+        'ajax' => true,
+        'loginrequired' => true,
+    ],
 ];

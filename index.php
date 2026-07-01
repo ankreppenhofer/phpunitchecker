@@ -41,16 +41,29 @@ $mform->display();
 
 if ($mform->is_submitted()) {
     [$res, $html] = $mform->run_button_action();
-    [$res, $html] = $mform->run_button_action();
-
-    if ($res === 0) {
-        $PAGE->requires->js_call_amd('local_confetti/confetti', 'init', [[
-            'preset' => get_config('local_confetti', 'confettipreset') ?: 'realistic',
-            'text' => get_string('testspassed', 'tool_phpunitchecker'),
-        ]]);
+    if ($mform instanceof init_phpunit && $res === 0 && $html !== '') {
+        // The init form returns the id of the queued adhoc task. Render a live
+        // status region and let JavaScript poll the task until it has finished.
+        $containerid = 'tool_phpunitchecker-taskstatus';
+        echo html_writer::div(
+            get_string('phpunitpreparing', 'tool_phpunitchecker'),
+            'alert alert-info',
+            ['id' => $containerid, 'role' => 'status', 'aria-live' => 'polite']
+        );
+        $PAGE->requires->js_call_amd(
+            'tool_phpunitchecker/task-status',
+            'init',
+            [$html, $containerid]
+        );
+    } else {
+        if ($res === 0) {
+            $PAGE->requires->js_call_amd('local_confetti/confetti', 'init', [[
+                'preset' => get_config('local_confetti', 'confettipreset') ?: 'realistic',
+                'text' => get_string('testspassed', 'tool_phpunitchecker'),
+            ]]);
+        }
+        echo $html;
     }
-
-    echo $html;
 }
 
 echo $OUTPUT->box_end();

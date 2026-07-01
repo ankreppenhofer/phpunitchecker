@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -15,19 +14,28 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace tool_phpunitchecker\task;
+
+use core\task\adhoc_task;
+use tool_phpunitchecker\phpunit;
+
 /**
- * Plugin version and other meta-data are defined here.
+ * Adhoc task that processes the initialization of phpunit tests.
  *
- * @package     tool_phpunitchecker
- * @copyright   2026 Anne Kreppenhofer
- * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    tool_phpunitchecker
+ * @copyright  2026 MoodleMoot DACH
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+class init_phpunit extends adhoc_task {
+    /**
+     * Run the task to initiate the phpunit testsuites.
+     */
+    public function execute() {
+        $customdata = $this->get_custom_data();
+        if (!isset($customdata->id)) {
+            throw new \coding_exception('Custom data must contain an id.');
+        }
 
-defined('MOODLE_INTERNAL') || die();
-
-$plugin->version = 2026063004;         // The current plugin version (Date: YYYYMMDDXX).
-$plugin->requires = 2026041000;         // Requires this Moodle version.
-$plugin->component = 'tool_phpunitchecker';      // Full name of the plugin (used for diagnostics).
-$plugin->dependencies = [
-    'local_confetti' => 2025090219,
-];
+        phpunit::get_instance()->make_ready();
+    }
+}

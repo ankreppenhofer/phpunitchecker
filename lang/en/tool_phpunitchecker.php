@@ -41,6 +41,7 @@ $string['makephpunitready'] = 'Prepare PHPUnit environment';
 $string['noreportdatafound'] = 'No report data could be found.';
 $string['overallsummary'] = 'Overall summary';
 $string['passedtests'] = 'Passed';
+$string['phpunitpreparing'] = 'Preparing the PHPUnit environment. This may take a while, please wait…';
 $string['phpunitreadinessfailed'] = 'Could not prepare the PHPUnit environment.';
 $string['phpunitready'] = 'PHPUnit environment is ready.';
 $string['pluginname'] = 'PhpUnit Checker';

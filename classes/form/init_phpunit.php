@@ -16,8 +16,9 @@
 
 namespace tool_phpunitchecker\form;
 
+use core\task\manager;
 use moodleform;
-use tool_phpunitchecker\phpunit;
+use tool_phpunitchecker\task\init_phpunit as init_phpunit_task;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -61,13 +62,12 @@ class init_phpunit extends moodleform {
     public function run_button_action(): array {
         $data = $this->get_data();
         if (!empty($data->makephpunitready)) {
-            // @var $customdata \tool_phpunitchecker\phpunit .
-            if (phpunit::get_instance()->make_ready()) {
-                \core\notification::success(get_string('phpunitready', 'tool_phpunitchecker'));
-            } else {
-                \core\notification::error(get_string('phpunitreadinessfailed', 'tool_phpunitchecker'));
-                \core\notification::error(s(phpunit::get_instance()->get_output()));
-            }
+            $id = uniqid();
+            $task = new init_phpunit_task();
+            $task->set_component('tool_phpunitchecker');
+            $task->set_custom_data(['id' => $id]);
+            manager::queue_adhoc_task($task, true);
+            return [0, $id];
         }
         return [0, ''];
     }
