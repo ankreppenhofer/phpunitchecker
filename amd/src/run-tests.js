@@ -42,6 +42,15 @@ define([], function() {
         form.parentNode.insertBefore(loader, form.nextSibling);
     };
 
+    /**
+     * Remove any report already shown on the page.
+     */
+    var removeExistingReport = function() {
+        document.querySelectorAll('.tool-phpunitchecker-report').forEach(function(report) {
+            report.remove();
+        });
+    };
+
     return {
         /**
          * Initialise the submit listener.
@@ -49,6 +58,7 @@ define([], function() {
          * @param {String} message Loading message.
          */
         init: function(message) {
+            // eslint-disable-next-line max-len
             var form = document.querySelector('form input[name="testsuites[]"], form select[name="testsuites[]"], form select[name="testsuites"]');
 
             if (!form) {
@@ -67,6 +77,7 @@ define([], function() {
                     button.disabled = true;
                 });
 
+                removeExistingReport();
                 showLoader(form, message);
             });
         }
