@@ -43,6 +43,7 @@ $string['phpunitreadinessfailed'] = 'Could not prepare the PHPUnit environment.'
 $string['phpunitready'] = 'PHPUnit environment is ready.';
 $string['pluginname'] = 'PhpUnit Checker';
 $string['pluginsettings'] = 'PHPUnit Checker settings';
+$string['reportdescription'] = 'Select one or more PHPUnit test suites to run. The report shows the executed tests, assertions, runtime, and any failures, errors, skipped tests, or other reported issues.';
 $string['reportsuite'] = 'Report suite';
 $string['riskytests'] = 'Risky';
 $string['runtestsuites'] = 'Run PHPUnit Test Suites';

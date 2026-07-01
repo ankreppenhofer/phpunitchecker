@@ -59,6 +59,7 @@ class test_suites_selection_form extends moodleform {
             ],
         );
         $mform->setType('testsuites', PARAM_TAGLIST);
+        $mform->addRule('testsuites', get_string('required'), 'required', null, 'client');
 
         $this->add_action_buttons(false, get_string('runtestsuites', 'tool_phpunitchecker'));
     }

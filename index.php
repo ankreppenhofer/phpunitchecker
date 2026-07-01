@@ -35,6 +35,7 @@ $mform = !phpunit::get_instance()->is_ready() ? new init_phpunit() : new test_su
 
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('pluginname', 'tool_phpunitchecker'));
+echo html_writer::tag('p', get_string('reportdescription', 'tool_phpunitchecker'));
 echo $OUTPUT->box_start();
 
 $mform->display();
