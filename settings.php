@@ -25,6 +25,21 @@
 defined('MOODLE_INTERNAL') || die;
 
 if ($hassiteconfig) {
+
+    $settings = new admin_settingpage(
+        'toolphpunitcheckersettings',
+        get_string('pluginsettings', 'tool_phpunitchecker')
+    );
+
+    $settings->add(new admin_setting_configcheckbox(
+        'tool_phpunitchecker/enableconfetti',
+        get_string('enableconfetti', 'tool_phpunitchecker'),
+        get_string('enableconfetti_desc', 'tool_phpunitchecker'),
+        0,
+    ));
+
+    $ADMIN->add('development', $settings);
+
     $ADMIN->add(
         'development',
         new admin_externalpage(
@@ -33,4 +48,5 @@ if ($hassiteconfig) {
             "$CFG->wwwroot/$CFG->admin/tool/phpunitchecker/index.php"
         )
     );
+
 }
