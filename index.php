@@ -40,6 +40,14 @@ echo $OUTPUT->box_start();
 
 $mform->display();
 
+if ($mform instanceof test_suites_selection_form) {
+    $PAGE->requires->js_call_amd(
+        'tool_phpunitchecker/run-tests',
+        'init',
+        [get_string('phpunitrunning', 'tool_phpunitchecker')]
+    );
+}
+
 if ($mform->is_submitted()) {
     [$res, $html] = $mform->run_button_action();
     if ($mform instanceof init_phpunit && $res === 0 && $html !== '') {
@@ -65,8 +73,6 @@ if ($mform->is_submitted()) {
         }
         echo $html;
     }
-
-    echo $html;
 }
 
 echo $OUTPUT->box_end();
