@@ -64,6 +64,8 @@ if ($mform->is_submitted()) {
         }
         echo $html;
     }
+
+    echo $html;
 }
 
 echo $OUTPUT->box_end();
