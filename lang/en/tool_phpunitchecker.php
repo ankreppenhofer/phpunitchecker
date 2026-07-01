@@ -65,3 +65,4 @@ $string['time'] = 'Time';
 $string['totaltests'] = 'Total tests';
 $string['unknownsuite'] = 'Unknown test suite';
 $string['warningtests'] = 'Warnings';
+$string['testspassed'] = 'Tests passed!';

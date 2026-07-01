@@ -41,6 +41,15 @@ $mform->display();
 
 if ($mform->is_submitted()) {
     [$res, $html] = $mform->run_button_action();
+    [$res, $html] = $mform->run_button_action();
+
+    if ($res === 0) {
+        $PAGE->requires->js_call_amd('local_confetti/confetti', 'init', [[
+            'preset' => get_config('local_confetti', 'confettipreset') ?: 'realistic',
+            'text' => get_string('testspassed', 'tool_phpunitchecker'),
+        ]]);
+    }
+
     echo $html;
 }
 

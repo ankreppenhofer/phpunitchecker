@@ -108,6 +108,9 @@ class test_suites_selection_form extends moodleform {
         if (!empty($data->testsuites)) {
             // @var $ustomdata \tool_phpunitchecker\phpunit .
             $junitxml = phpunit::get_instance()->run_suites($data->testsuites);
+            if (empty($junitxml)) {
+                return [1, 'error creating test report'];
+            }
             $reportoutput = new report_output($junitxml);
             $html = $OUTPUT->render_from_template(
                 'tool_phpunitchecker/report_output',
