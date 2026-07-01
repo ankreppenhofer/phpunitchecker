@@ -17,6 +17,7 @@
 namespace tool_phpunitchecker\form;
 
 use moodleform;
+use tool_phpunitchecker\phpunit;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -61,11 +62,11 @@ class init_phpunit extends moodleform {
         $data = $this->get_data();
         if (!empty($data->makephpunitready)) {
             // @var $customdata \tool_phpunitchecker\phpunit .
-            if ($this->_customdata->make_ready()) {
+            if (phpunit::get_instance()->make_ready()) {
                 \core\notification::success(get_string('phpunitready', 'tool_phpunitchecker'));
             } else {
                 \core\notification::error(get_string('phpunitreadinessfailed', 'tool_phpunitchecker'));
-                \core\notification::error(s($this->_customdata->get_output()));
+                \core\notification::error(s(phpunit::get_instance()->get_output()));
             }
         }
         return [0, ''];

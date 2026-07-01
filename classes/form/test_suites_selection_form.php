@@ -17,6 +17,7 @@
 namespace tool_phpunitchecker\form;
 
 use moodleform;
+use tool_phpunitchecker\phpunit;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -106,7 +107,7 @@ class test_suites_selection_form extends moodleform {
         $data = $this->get_data();
         if (!empty($data->testsuites)) {
             // @var $ustomdata \tool_phpunitchecker\phpunit .
-            $junitxml = $this->_customdata->run_suites($data->testsuites);
+            $junitxml = phpunit::get_instance()->run_suites($data->testsuites);
             $reportoutput = new report_output($junitxml);
             $html = $OUTPUT->render_from_template(
                 'tool_phpunitchecker/report_output',

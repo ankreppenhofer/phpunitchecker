@@ -31,9 +31,7 @@ require_once($CFG->libdir.'/adminlib.php');
 
 admin_externalpage_setup('toolphpunitchecker');
 
-$phpunit = phpunit::get_instance();
-
-$mform = !$phpunit->is_ready() ? new init_phpunit(null, $phpunit) : new test_suites_selection_form(null, $phpunit);
+$mform = !phpunit::get_instance()->is_ready() ? new init_phpunit() : new test_suites_selection_form();
 
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('pluginname', 'tool_phpunitchecker'));
