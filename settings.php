@@ -25,7 +25,6 @@
 defined('MOODLE_INTERNAL') || die;
 
 if ($hassiteconfig) {
-
     $settings = new admin_settingpage(
         'toolphpunitcheckersettings',
         get_string('pluginsettings', 'tool_phpunitchecker')

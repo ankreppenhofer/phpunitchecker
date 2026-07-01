@@ -60,39 +60,6 @@ class test_suites_selection_form extends moodleform {
         );
         $mform->setType('testsuites', PARAM_TAGLIST);
 
-        $mform->addElement(
-            'header',
-            'displayoptionssection',
-            get_string('displayoptions', 'tool_phpunitchecker')
-        );
-
-        $mform->addElement(
-            'advcheckbox',
-            'displaydeprecations',
-            get_string('displaydeprecations', 'tool_phpunitchecker')
-        );
-
-        $mform->addElement(
-            'advcheckbox',
-            'displaywarnings',
-            get_string('displaywarnings', 'tool_phpunitchecker')
-        );
-        $mform->setDefault('displaywarnings', 1);
-
-        $mform->addElement(
-            'advcheckbox',
-            'displayerrors',
-            get_string('displayerrors', 'tool_phpunitchecker')
-        );
-        $mform->setDefault('displayerrors', 1);
-
-        $mform->addElement(
-            'advcheckbox',
-            'displaynotices',
-            get_string('displaynotices', 'tool_phpunitchecker')
-        );
-        $mform->setDefault('displaynotices', 1);
-
         $this->add_action_buttons(false, get_string('runtestsuites', 'tool_phpunitchecker'));
     }
 
