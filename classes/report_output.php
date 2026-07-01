@@ -47,20 +47,8 @@ class report_output implements renderable, templatable {
     /** @var string Error test status. */
     protected const STATUS_ERROR = 'error';
 
-    /** @var string Warning test status. */
-    protected const STATUS_WARNING = 'warning';
-
-    /** @var string Risky test status. */
-    protected const STATUS_RISKY = 'risky';
-
     /** @var string Skipped test status. */
     protected const STATUS_SKIPPED = 'skipped';
-
-    /** @var string Incomplete test status. */
-    protected const STATUS_INCOMPLETE = 'incomplete';
-
-    /** @var string Deprecated test status. */
-    protected const STATUS_DEPRECATED = 'deprecated';
 
     /**
      * Raw JUnit XML report content.
@@ -105,39 +93,11 @@ class report_output implements renderable, templatable {
     protected int $errors = 0;
 
     /**
-     * Number of warning tests over the whole report.
-     *
-     * @var int
-     */
-    protected int $warnings = 0;
-
-    /**
-     * Number of risky tests over the whole report.
-     *
-     * @var int
-     */
-    protected int $risky = 0;
-
-    /**
      * Number of skipped tests over the whole report.
      *
      * @var int
      */
     protected int $skipped = 0;
-
-    /**
-     * Number of incomplete tests over the whole report.
-     *
-     * @var int
-     */
-    protected int $incomplete = 0;
-
-    /**
-     * Number of deprecated tests over the whole report.
-     *
-     * @var int
-     */
-    protected int $deprecated = 0;
 
     /**
      * Total number of tests over the whole report.
@@ -163,6 +123,7 @@ class report_output implements renderable, templatable {
         if($report == null || $report == '') {
             throw new moodle_exception('Report content cannot be empty.');
         }
+
         $this->report = $report;
         $this->parse_report();
     }
@@ -324,11 +285,7 @@ class report_output implements renderable, templatable {
             'passed' => 0,
             'failed' => 0,
             'errors' => 0,
-            'warnings' => 0,
-            'risky' => 0,
             'skipped' => 0,
-            'incomplete' => 0,
-            'deprecated' => 0,
             'total' => 0,
             'allpassed' => false,
             'hasproblems' => false,
@@ -406,11 +363,7 @@ class report_output implements renderable, templatable {
             'passed' => 0,
             'failed' => 0,
             'errors' => 0,
-            'warnings' => 0,
-            'risky' => 0,
             'skipped' => 0,
-            'incomplete' => 0,
-            'deprecated' => 0,
             'total' => 0,
             'allpassed' => false,
             'hasproblems' => false,
@@ -540,24 +493,8 @@ class report_output implements renderable, templatable {
                 $suite['errors']++;
                 break;
 
-            case self::STATUS_WARNING:
-                $suite['warnings']++;
-                break;
-
-            case self::STATUS_RISKY:
-                $suite['risky']++;
-                break;
-
             case self::STATUS_SKIPPED:
                 $suite['skipped']++;
-                break;
-
-            case self::STATUS_INCOMPLETE:
-                $suite['incomplete']++;
-                break;
-
-            case self::STATUS_DEPRECATED:
-                $suite['deprecated']++;
                 break;
         }
     }
@@ -582,24 +519,8 @@ class report_output implements renderable, templatable {
                 $this->errors++;
                 break;
 
-            case self::STATUS_WARNING:
-                $this->warnings++;
-                break;
-
-            case self::STATUS_RISKY:
-                $this->risky++;
-                break;
-
             case self::STATUS_SKIPPED:
                 $this->skipped++;
-                break;
-
-            case self::STATUS_INCOMPLETE:
-                $this->incomplete++;
-                break;
-
-            case self::STATUS_DEPRECATED:
-                $this->deprecated++;
                 break;
         }
     }
@@ -614,13 +535,7 @@ class report_output implements renderable, templatable {
         $statusnodes = [
             'error' => self::STATUS_ERROR,
             'failure' => self::STATUS_FAILED,
-            'warning' => self::STATUS_WARNING,
             'skipped' => self::STATUS_SKIPPED,
-            'risky' => self::STATUS_RISKY,
-            'incomplete' => self::STATUS_INCOMPLETE,
-            'deprecation' => self::STATUS_DEPRECATED,
-            'deprecated' => self::STATUS_DEPRECATED,
-            'notice' => self::STATUS_WARNING,
         ];
 
         foreach ($statusnodes as $nodename => $status) {
@@ -683,44 +598,12 @@ class report_output implements renderable, templatable {
                     'text' => get_string('statuserror', 'tool_phpunitchecker'),
                 ];
 
-            case self::STATUS_WARNING:
-                return [
-                    'class' => 'text-warning',
-                    'badgeclass' => 'badge bg-warning text-dark',
-                    'icon' => '⚠',
-                    'text' => get_string('statuswarning', 'tool_phpunitchecker'),
-                ];
-
-            case self::STATUS_RISKY:
-                return [
-                    'class' => 'text-warning',
-                    'badgeclass' => 'badge bg-warning text-dark',
-                    'icon' => 'R',
-                    'text' => get_string('statusrisky', 'tool_phpunitchecker'),
-                ];
-
             case self::STATUS_SKIPPED:
                 return [
                     'class' => 'text-muted',
                     'badgeclass' => 'badge bg-secondary',
                     'icon' => 'S',
                     'text' => get_string('statusskipped', 'tool_phpunitchecker'),
-                ];
-
-            case self::STATUS_INCOMPLETE:
-                return [
-                    'class' => 'text-muted',
-                    'badgeclass' => 'badge bg-secondary',
-                    'icon' => 'I',
-                    'text' => get_string('statusincomplete', 'tool_phpunitchecker'),
-                ];
-
-            case self::STATUS_DEPRECATED:
-                return [
-                    'class' => 'text-warning',
-                    'badgeclass' => 'badge bg-warning text-dark',
-                    'icon' => 'D',
-                    'text' => get_string('statusdeprecated', 'tool_phpunitchecker'),
                 ];
 
             default:
@@ -779,20 +662,12 @@ class report_output implements renderable, templatable {
         $this->total = $this->passed
             + $this->failed
             + $this->errors
-            + $this->warnings
-            + $this->risky
-            + $this->skipped
-            + $this->incomplete
-            + $this->deprecated;
+            + $this->skipped;
 
         $this->allpassed = $this->total > 0
             && $this->failed === 0
             && $this->errors === 0
-            && $this->warnings === 0
-            && $this->risky === 0
-            && $this->skipped === 0
-            && $this->incomplete === 0
-            && $this->deprecated === 0;
+            && $this->skipped === 0;
     }
 
     /**
@@ -804,11 +679,7 @@ class report_output implements renderable, templatable {
     protected function has_problems(array $summary): bool {
         return $summary['failed'] > 0
             || $summary['errors'] > 0
-            || $summary['warnings'] > 0
-            || $summary['risky'] > 0
-            || $summary['skipped'] > 0
-            || $summary['incomplete'] > 0
-            || $summary['deprecated'] > 0;
+            || $summary['skipped'] > 0;
     }
 
     /**
@@ -835,29 +706,9 @@ class report_output implements renderable, templatable {
                 'class' => 'text-danger',
             ],
             [
-                'label' => get_string('warningtests', 'tool_phpunitchecker'),
-                'value' => $summary['warnings'],
-                'class' => 'text-warning',
-            ],
-            [
-                'label' => get_string('riskytests', 'tool_phpunitchecker'),
-                'value' => $summary['risky'],
-                'class' => 'text-warning',
-            ],
-            [
                 'label' => get_string('skippedtests', 'tool_phpunitchecker'),
                 'value' => $summary['skipped'],
                 'class' => 'text-muted',
-            ],
-            [
-                'label' => get_string('incompletetests', 'tool_phpunitchecker'),
-                'value' => $summary['incomplete'],
-                'class' => 'text-muted',
-            ],
-            [
-                'label' => get_string('deprecatedtests', 'tool_phpunitchecker'),
-                'value' => $summary['deprecated'],
-                'class' => 'text-warning',
             ],
         ];
     }
@@ -915,15 +766,6 @@ class report_output implements renderable, templatable {
     }
 
     /**
-     * Returns the number of warning tests.
-     *
-     * @return int
-     */
-    public function get_warning_count(): int {
-        return $this->warnings;
-    }
-
-    /**
      * Returns the total number of tests.
      *
      * @return int
@@ -958,11 +800,7 @@ class report_output implements renderable, templatable {
         $data->passed = $this->passed;
         $data->failed = $this->failed;
         $data->errors = $this->errors;
-        $data->warnings = $this->warnings;
-        $data->risky = $this->risky;
         $data->skipped = $this->skipped;
-        $data->incomplete = $this->incomplete;
-        $data->deprecated = $this->deprecated;
         $data->total = $this->total;
         $data->allpassed = $this->allpassed;
 
@@ -975,11 +813,7 @@ class report_output implements renderable, templatable {
             'passed' => $this->passed,
             'failed' => $this->failed,
             'errors' => $this->errors,
-            'warnings' => $this->warnings,
-            'risky' => $this->risky,
             'skipped' => $this->skipped,
-            'incomplete' => $this->incomplete,
-            'deprecated' => $this->deprecated,
         ]);
 
         return $data;

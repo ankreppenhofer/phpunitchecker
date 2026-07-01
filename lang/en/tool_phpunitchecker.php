@@ -59,6 +59,7 @@ $string['statusrisky'] = 'Risky';
 $string['statusskipped'] = 'Skipped';
 $string['statusunknown'] = 'Unknown';
 $string['statuswarning'] = 'Warning';
+$string['testpassed'] = 'Test passed';
 $string['testsuites'] = 'Test Suites';
 $string['testsummary'] = 'Test summary';
 $string['time'] = 'Time';
