@@ -18,6 +18,7 @@ namespace tool_phpunitchecker;
 
 defined('MOODLE_INTERNAL') || die();
 
+use core\exception\moodle_exception;
 use renderable;
 use renderer_base;
 use stdClass;
@@ -156,8 +157,12 @@ class report_output implements renderable, templatable {
      * Creates a new report output instance.
      *
      * @param string $report Raw JUnit XML report content.
+     * @throws moodle_exception
      */
     public function __construct(string $report) {
+        if($report == null || $report == '') {
+            throw new moodle_exception('Report content cannot be empty.');
+        }
         $this->report = $report;
         $this->parse_report();
     }

@@ -16,13 +16,13 @@
 
 namespace tool_phpunitchecker\form;
 
-use moodleform;
-use tool_phpunitchecker\phpunit;
-
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir . '/formslib.php');
 
+use core\exception\moodle_exception;
+use moodleform;
+use tool_phpunitchecker\phpunit;
 use tool_phpunitchecker\report_output;
 
 /**
@@ -101,6 +101,8 @@ class test_suites_selection_form extends moodleform {
      * Returns an array <int,string> which is the return code (0 = success)
      * and html with the testreport to display.
      * @return array
+     * @throws moodle_exception
+     * @var $customdata phpunit
      */
     public function run_button_action(): array {
         global $OUTPUT;
