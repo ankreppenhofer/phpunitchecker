@@ -62,12 +62,6 @@ class phpunit {
     private $code;
 
     /**
-     * Cache instance.
-     * @var \cache
-     */
-    private $cache;
-
-    /**
      * Constructor.
      */
     public function __construct() {
@@ -78,7 +72,6 @@ class phpunit {
         $this->code = 0;
         $this->moodlephpunitcli = $CFG->dirroot . implode(DIRECTORY_SEPARATOR, ['', 'admin', 'tool', 'phpunit', 'cli']);
         $this->php = $CFG->pathtophp ?? 'php';
-        $this->cache = \cache::make('tool_phpunitchecker', 'suites');
     }
 
     /**
@@ -93,13 +86,16 @@ class phpunit {
 
     /**
      * Returns an array <string,int> with key the suite name and value the number of test cases.
+     * @param bool $purge If true, the cache is purged and the list is re-generated.
      * @return array
      */
-    public function list_suites(): array {
-
-        $cached = $this->cache->get('list');
-        if ($cached !== false) {
-            return $cached;
+    public function list_suites($purge = false): array {
+        $cache = \cache::make('tool_phpunitchecker', 'suites');
+        if (!$purge) {
+            $cached = $cache->get('list');
+            if ($cached !== false) {
+                return $cached;
+            }
         }
         $this->exec($this->bin, ['--list-suites' => null]);
         if ($this->code !== 0) {
@@ -119,7 +115,7 @@ class phpunit {
                 }
             }
         }
-        $this->cache->set('list', $suites);
+        $cache->set('list', $suites);
         return $suites;
     }
 
@@ -184,8 +180,8 @@ class phpunit {
      * @return bool
      */
     public function make_ready(): bool {
-        $this->cache->delete('list');
         $this->exec("{$this->php} {$this->moodlephpunitcli}/init.php");
+        $this->list_suites(true);
         return $this->code === 0;
     }
 
