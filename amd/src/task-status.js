@@ -56,14 +56,15 @@ define(['core/ajax', 'core/notification', 'core/str'], function(Ajax, Notificati
      *
      * @param {String} taskid
      * @param {HTMLElement|null} container
+     * @param {Boolean} reload Whether to reload the page after the task completes.
      */
-    var poll = function(taskid, container) {
+    var poll = function(taskid, container, reload) {
         fetchStatus(taskid).then(function(result) {
             // Still queued or running: show any progress message and check again shortly.
             if (INPROGRESS.indexOf(result.status) !== -1) {
                 setMessage(container, result.message);
                 setTimeout(function() {
-                    poll(taskid, container);
+                    poll(taskid, container, reload);
                 }, POLL_INTERVAL);
                 return result;
             }
@@ -79,10 +80,11 @@ define(['core/ajax', 'core/notification', 'core/str'], function(Ajax, Notificati
             }
 
             // Any other status - including the task no longer being queued - means success.
-            return Str.get_string('phpunitready', 'tool_phpunitchecker').then(function(str) {
-                Notification.addNotification({message: result.message || str, type: 'success'});
-                return str;
-            });
+            if (reload) {
+                let url = new URL(window.location.href);
+                url.searchParams.append('phpunitready', '1');
+                window.location.replace(url.toString());
+            }
         }).catch(Notification.exception);
     };
 
@@ -92,10 +94,11 @@ define(['core/ajax', 'core/notification', 'core/str'], function(Ajax, Notificati
          *
          * @param {String} taskid The id returned when the adhoc task was queued.
          * @param {String} containerid Id of the element used to show progress.
+         * @param {Boolean} reload Whether to reload the page after the task completes.
          */
-        init: function(taskid, containerid) {
+        init: function(taskid, containerid, reload = false) {
             var container = document.getElementById(containerid);
-            poll(taskid, container);
+            poll(taskid, container, reload);
         }
     };
 });

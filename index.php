@@ -31,9 +31,18 @@ require_once($CFG->libdir . '/adminlib.php');
 
 admin_externalpage_setup('toolphpunitchecker');
 
+$PAGE->set_url(new moodle_url('/admin/tool/phpunitchecker/index.php'));
+
 $mform = !phpunit::get_instance()->is_ready() ? new init_phpunit() : new test_suites_selection_form();
 
 echo $OUTPUT->header();
+$phpunitready = optional_param('phpunitready', 0, PARAM_BOOL);
+if ($phpunitready && $mform instanceof test_suites_selection_form) {
+    echo $OUTPUT->notification(
+        get_string('phpunitready', 'tool_phpunitchecker'),
+        \core\output\notification::NOTIFY_SUCCESS
+    );
+}
 echo $OUTPUT->heading(get_string('pluginname', 'tool_phpunitchecker'));
 echo html_writer::tag('p', get_string('reportdescription', 'tool_phpunitchecker'));
 echo $OUTPUT->box_start();
@@ -62,7 +71,7 @@ if ($mform->is_submitted()) {
         $PAGE->requires->js_call_amd(
             'tool_phpunitchecker/task-status',
             'init',
-            [$html, $containerid]
+            [$html, $containerid, true]
         );
     } else {
         $PAGE->requires->js_call_amd('tool_phpunitchecker/inspect-file', 'init', [get_string('fileinspector', 'tool_phpunitchecker')]);
