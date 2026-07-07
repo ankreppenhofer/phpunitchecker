@@ -66,6 +66,7 @@ class init_phpunit extends moodleform {
             $task = new init_phpunit_task();
             $task->set_component('tool_phpunitchecker');
             $task->set_custom_data(['id' => $id]);
+            $task->set_next_run_time(time());
             manager::queue_adhoc_task($task, true);
             return [0, $id];
         }
