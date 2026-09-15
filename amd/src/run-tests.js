@@ -46,7 +46,7 @@ define([], function() {
      * Remove any report already shown on the page.
      */
     var removeExistingReport = function() {
-        document.querySelectorAll('.tool-phpunitchecker-report').forEach(function(report) {
+        document.querySelectorAll('.tool-phpunitchecker-report, .tool-phpunitchecker-coverage').forEach(function(report) {
             report.remove();
         });
     };

@@ -21,3 +21,24 @@
 .file-inspector-content {
     white-space: pre;
 }
+.tool-phpunitchecker-coverage .accordion-button::after {
+    display: none;
+}
+
+.tool-phpunitchecker-coverage .phpunitchecker-accordion-icon {
+    transition: transform 0.2s ease-in-out;
+    display: inline-block;
+    width: 1rem;
+}
+
+.tool-phpunitchecker-coverage .accordion-button:not(.collapsed) .phpunitchecker-accordion-icon {
+    transform: rotate(90deg);
+}
+
+.tool-phpunitchecker-coverage .coverage-bar {
+    height: 0.75rem;
+}
+
+.tool-phpunitchecker-coverage .method-list code {
+    word-break: break-all;
+}

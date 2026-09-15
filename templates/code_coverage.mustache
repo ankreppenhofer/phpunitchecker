@@ -1,0 +1,202 @@
+{{!
+    This file is part of Moodle - https://moodle.org/
+
+    @template tool_phpunitchecker/code_coverage
+
+    Template for rendering parsed PHPUnit clover code coverage reports.
+
+    The report is structured as packages > files > classes > methods. Every
+    level shows how much of its code is covered by tests, both as a percentage
+    and as a covered/total ratio, so the amount of tested code is easy to grasp.
+}}
+<div class="tool-phpunitchecker-coverage">
+
+    {{#hasdata}}
+        <div class="alert {{statusclass}} mb-3">
+            <div class="d-flex justify-content-between align-items-center gap-3">
+                <strong>{{#str}} codecoverage, tool_phpunitchecker {{/str}}</strong>
+                <span class="h4 mb-0 {{textclass}}">{{percentage}}%</span>
+            </div>
+
+            <div class="progress coverage-bar mt-2" role="progressbar"
+                 aria-valuenow="{{percentage}}" aria-valuemin="0" aria-valuemax="100">
+                <div class="progress-bar {{barclass}}" style="width: {{percentage}}%"></div>
+            </div>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-header">
+                <strong>{{#str}} coveragesummary, tool_phpunitchecker {{/str}}</strong>
+            </div>
+
+            <div class="card-body">
+                <div class="row gy-2 mb-3">
+                    <div class="col-md-3">
+                        <div class="border rounded p-2 h-100">
+                            <div class="text-muted small">{{#str}} files, tool_phpunitchecker {{/str}}</div>
+                            <div class="h5 mb-0">{{filecount}}</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="border rounded p-2 h-100">
+                            <div class="text-muted small">{{#str}} classes, tool_phpunitchecker {{/str}}</div>
+                            <div class="h5 mb-0">{{classcount}}</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="border rounded p-2 h-100">
+                            <div class="text-muted small">{{#str}} coveredmethods, tool_phpunitchecker {{/str}}</div>
+                            <div class="h5 mb-0">{{coveredmethods}} / {{totalmethods}}</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="border rounded p-2 h-100">
+                            <div class="text-muted small">{{#str}} coverage, tool_phpunitchecker {{/str}}</div>
+                            <div class="h5 mb-0 {{textclass}}">{{percentage}}%</div>
+                        </div>
+                    </div>
+                </div>
+
+                {{> tool_phpunitchecker/coverage_bars }}
+            </div>
+        </div>
+
+        <h3 class="h5 mb-3">{{#str}} packages, tool_phpunitchecker {{/str}}</h3>
+
+        <div class="accordion mb-3" id="phpunitchecker-coverage-accordion">
+            {{#packages}}
+                <div class="accordion-item border mb-2">
+
+                    <h2 class="accordion-header" id="phpunitchecker-coverage-heading-{{uniqid}}">
+                        <button class="accordion-button collapsed"
+                                type="button"
+                                data-bs-toggle="collapse"
+                                data-bs-target="#phpunitchecker-coverage-collapse-{{uniqid}}"
+                                aria-expanded="false"
+                                aria-controls="phpunitchecker-coverage-collapse-{{uniqid}}">
+
+                            <span class="phpunitchecker-accordion-icon me-2" aria-hidden="true">▸</span>
+
+                            <div class="w-100 me-3">
+                                <div class="d-flex justify-content-between align-items-center gap-3">
+                                    <strong>{{name}}</strong>
+                                    <span class="badge {{barclass}}">{{percentage}}%</span>
+                                </div>
+
+                                <div class="progress coverage-bar mt-2" role="progressbar"
+                                     aria-valuenow="{{percentage}}" aria-valuemin="0" aria-valuemax="100">
+                                    <div class="progress-bar {{barclass}}" style="width: {{percentage}}%"></div>
+                                </div>
+                            </div>
+                        </button>
+                    </h2>
+
+                    <div id="phpunitchecker-coverage-collapse-{{uniqid}}"
+                         class="accordion-collapse collapse"
+                         aria-labelledby="phpunitchecker-coverage-heading-{{uniqid}}"
+                         data-bs-parent="#phpunitchecker-coverage-accordion">
+
+                        <div class="accordion-body">
+
+                            <div class="mb-3">
+                                {{> tool_phpunitchecker/coverage_bars }}
+                            </div>
+
+                            {{#files}}
+                                <div class="card mb-3">
+                                    <div class="card-header">
+                                        <div class="d-flex justify-content-between align-items-center gap-3">
+                                            <div>
+                                                <strong class="{{textclass}}">{{shortname}}</strong>
+                                                <div class="small text-muted">{{name}}</div>
+                                            </div>
+                                            <span class="badge {{barclass}}">{{percentage}}%</span>
+                                        </div>
+
+                                        <div class="progress coverage-bar mt-2" role="progressbar"
+                                             aria-valuenow="{{percentage}}" aria-valuemin="0" aria-valuemax="100">
+                                            <div class="progress-bar {{barclass}}" style="width: {{percentage}}%"></div>
+                                        </div>
+                                    </div>
+
+                                    <div class="card-body">
+
+                                        {{#classes}}
+                                            <div class="mb-4">
+                                                <div class="d-flex justify-content-between align-items-center gap-3">
+                                                    <div>
+                                                        <strong class="{{textclass}}">{{shortname}}</strong>
+                                                        <div class="small text-muted">{{name}}</div>
+                                                    </div>
+                                                    <div class="text-nowrap">
+                                                        <span class="text-muted small me-2">
+                                                            {{coveredmethods}} / {{totalmethods}}
+                                                            {{#str}} methods, tool_phpunitchecker {{/str}}
+                                                        </span>
+                                                        <span class="badge {{barclass}}">{{percentage}}%</span>
+                                                    </div>
+                                                </div>
+
+                                                <div class="mt-2">
+                                                    {{> tool_phpunitchecker/coverage_bars }}
+                                                </div>
+
+                                                {{#hasmethods}}
+                                                    <ul class="list-group mt-2 method-list">
+                                                        {{#methods}}
+                                                            <li class="list-group-item d-flex align-items-center gap-2">
+                                                                <span class="{{badgeclass}}" title="{{statustext}}">
+                                                                    {{icon}}
+                                                                </span>
+                                                                <code class="{{rowclass}}">{{name}}</code>
+                                                                <span class="small text-muted ms-auto text-nowrap">
+                                                                    {{#str}} line, tool_phpunitchecker {{/str}} {{line}}
+                                                                    · {{#str}} runs, tool_phpunitchecker {{/str}}: {{count}}
+                                                                </span>
+                                                            </li>
+                                                        {{/methods}}
+                                                    </ul>
+                                                {{/hasmethods}}
+                                            </div>
+                                        {{/classes}}
+
+                                        {{#hasownmethods}}
+                                            <div class="mb-2">
+                                                <div class="small text-muted mb-2">
+                                                    {{#str}} methods, tool_phpunitchecker {{/str}}
+                                                </div>
+                                                <ul class="list-group method-list">
+                                                    {{#methods}}
+                                                        <li class="list-group-item d-flex align-items-center gap-2">
+                                                            <span class="{{badgeclass}}" title="{{statustext}}">
+                                                                {{icon}}
+                                                            </span>
+                                                            <code class="{{rowclass}}">{{name}}</code>
+                                                            <span class="small text-muted ms-auto text-nowrap">
+                                                                {{#str}} line, tool_phpunitchecker {{/str}} {{line}}
+                                                                · {{#str}} runs, tool_phpunitchecker {{/str}}: {{count}}
+                                                            </span>
+                                                        </li>
+                                                    {{/methods}}
+                                                </ul>
+                                            </div>
+                                        {{/hasownmethods}}
+
+                                    </div>
+                                </div>
+                            {{/files}}
+
+                        </div>
+                    </div>
+                </div>
+            {{/packages}}
+        </div>
+    {{/hasdata}}
+
+    {{^hasdata}}
+        <div class="alert alert-warning">
+            {{#str}} nocoveragedata, tool_phpunitchecker {{/str}}
+        </div>
+    {{/hasdata}}
+
+</div>

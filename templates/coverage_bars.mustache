@@ -1,0 +1,32 @@
+{{!
+    This file is part of Moodle - https://moodle.org/
+
+    @template tool_phpunitchecker/coverage_bars
+
+    Renders a set of labelled coverage bars from a "summaryitems" context.
+
+    Each item is expected to provide: label, percentage, covered, total,
+    hasdata, barclass and textclass.
+}}
+<div class="row gy-2">
+    {{#summaryitems}}
+        <div class="col-md-4">
+            <div class="border rounded p-2 h-100">
+                <div class="d-flex justify-content-between align-items-center">
+                    <span class="text-muted small">{{label}}</span>
+                    <span class="small {{textclass}}">
+                        {{#hasdata}}{{percentage}}%{{/hasdata}}
+                        {{^hasdata}}{{#str}} nodata, tool_phpunitchecker {{/str}}{{/hasdata}}
+                    </span>
+                </div>
+
+                <div class="progress coverage-bar mt-1" role="progressbar"
+                     aria-valuenow="{{percentage}}" aria-valuemin="0" aria-valuemax="100">
+                    <div class="progress-bar {{barclass}}" style="width: {{percentage}}%"></div>
+                </div>
+
+                <div class="small text-muted mt-1">{{covered}} / {{total}}</div>
+            </div>
+        </div>
+    {{/summaryitems}}
+</div>

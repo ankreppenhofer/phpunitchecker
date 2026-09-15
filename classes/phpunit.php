@@ -62,6 +62,14 @@ class phpunit {
     private $code;
 
     /**
+     * Path to the code coverage file. This is empty when no code coverage is requested.
+     * @var string
+     */
+    private $codecoveragefile = '';
+
+
+
+    /**
      * Constructor.
      */
     public function __construct() {
@@ -148,7 +156,8 @@ class phpunit {
             return $result;
         }
         $junitxml = $CFG->tempdir . DIRECTORY_SEPARATOR . uniqid('phpunitchecker_');
-        $this->exec($this->bin, [
+        $bin = $this->bin;
+        $args = [
             '--display-notices' => null,
             '--display-warnings' => null,
             '--display-deprecations' => null,
@@ -158,11 +167,21 @@ class phpunit {
             '--display-all-issues' => null,
             '--testsuite' => implode(',', $suites),
             '--log-junit' => $junitxml,
-        ]);
+        ];
+
+        if (!empty($this->codecoveragefile)) {
+            $args['--coverage-clover'] = $this->codecoveragefile;
+            $bin = 'XDEBUG_MODE=coverage ' . $bin;
+        }
+        $this->exec($bin, $args);
         $result->code = $this->code;
         $result->output = $this->get_output();
         $result->junitxml = file_get_contents($junitxml) ?: '';
         @unlink($junitxml);
+        if (!empty($this->codecoveragefile)) {
+            $result->cloverxml = file_get_contents($this->codecoveragefile) ?: '';
+            @unlink($this->codecoveragefile);
+        }
         return $result;
     }
 
@@ -191,6 +210,15 @@ class phpunit {
      */
     public function get_output(): string {
         return implode(PHP_EOL, $this->output);
+    }
+
+    /**
+     * Enable code coverage for the next test run.
+     * @return void
+     */
+    public function enable_code_coverage(): void {
+        global $CFG;
+        $this->codecoveragefile = tempnam($CFG->tempdir, 'phpunitchecker_codecoverage_');
     }
 
     /**
